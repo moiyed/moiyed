@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="لعبة الحرب التفاعلية، دردشة صوتية، ومسابقات جماعية">
+    <meta name="keywords" content="لعبة الحرب, طبول الحرب, دردشة صوتية, رومات ويفو, لعبة تفاعلية">
+    <title>لعبة الحرب | طبول الحرب</title>
+    <link rel="shortcut icon" href="icons/sword.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            background-attachment: fixed;
+            transition: opacity ease-in 0.2s;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body[unresolved] {
+            opacity: 0;
+            display: block;
+            overflow: hidden;
+            position: relative;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        #mainBoard {
+            border: 2px solid #333;
+            background-color: #d1d1d1;
+        }
+        #mainBoard td {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            cursor: pointer;
+        }
+        #mainBoard img {
+            width: 50px;
+            height: 50px;
+        }
+        #centralTd {
+            background-color: #211a0542;
+            width: 400px;
+            height: 400px;
+            position: relative;
+        }
+        #centralTd #imageDiv {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        #centralTd img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        #centralTd #WeaponPower {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            opacity: 0;
+        }
+        .score, .teamName {
+            width: 120px;
+            padding: 5px;
+            margin: 5px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        .coloredCircle {
+            width: 30px;
+            height: 30px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        #settingsForm {
+            visibility: hidden;
+            margin: 10px auto;
+            width: 600px;
+            text-align: center;
+        }
+        .popup {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            user-select: none;
+        }
+        .popup .popuptext {
+            visibility: hidden;
+            width: 160px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -80px;
+        }
+        .popup .popuptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+        .popup .show {
+            visibility: visible;
+            animation: fadeIn 1s;
+        }
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        .blue { color: #0101DF; }
+        .red { color: #da0000; }
+        .logo {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        #resetButton, #stopMusicButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+        }
+        #resetButton:hover, #stopMusicButton:hover {
+            background-color: #555;
+        }
+        #confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background: #ffd700;
+            opacity: 0.8;
+            animation: fall 5s linear infinite;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        #gameOverMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 20px;
+            font-size: 24px;
+            border-radius: 10px;
+            z-index: 1001;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            #mainBoard td { width: 40px; height: 40px; }
+            #mainBoard img { width: 30px; height: 30px; }
+            #centralTd { width: 200px; height: 200px; }
+            .score, .teamName { width: 100px; }
+            #settingsForm { width: 100%; }
+        }
+    </style>
+</head>
+<body onload="loadOptions()">
+    <div class="popup" onclick="myFunction()">Moiyed Al Aiyeed
+        <span class="popuptext" id="myPopup">Moiyed Al Aiyeed</span>
+    </div>
+
+    <div class="logo">
+        <a href="#"><img src="icons/logo.png" alt="شعار اللعبة"></a>
+    </div>
+
+    <form id="settingsForm">
+        <select id="leftColorSelector" onchange="leftScore.style.color=this.value; leftTeam.style.color=this.value">
+            <option selected value="#da0000">أحمر</option>
+            <option value="#0101DF">أزرق</option>
+            <option value="#FF8621">برتقالي</option>
+            <option value="#000000">أسود</option>
+            <option value="#FF00FF">وردي</option>
+            <option value="#8A0886">بنفسجي</option>
+            <option value="#0c8c0f">أخضر</option>
+            <option value="#9C5151">بني</option>
+            <option value="#585858">رمادي</option>
+            <option value="gold">ذهبي</option>
+        </select>
+        <img class="coloredCircle" alt="red" onclick="changeBoardColor('#ba0101', '#d1d1d1')" src="icons/redCircle.png">
+        <img class="coloredCircle" alt="blue" onclick="changeBoardColor('#24759b', '#d1d1d1')" src="icons/trkwazCircle.png">
+        <img class="coloredCircle" alt="green" onclick="changeBoardColor('#0b721b', '#d1d1d1')" src="icons/greenCircle.png">
+        <img class="coloredCircle" alt="purple" onclick="changeBoardColor('#8c26ad', '#d1d1d1')" src="icons/purpleCircle.png">
+        <img class="coloredCircle" alt="purple" onclick="changeBoardColor('#46494d', '#3a4659')" src="D:\icons\icons\grayCircle.png">
+        <img class="coloredCircle" alt="purple" onclick="changeBoardColor('#f7f3f2', '#c2bbba')" src="D:\icons\icons\palBlueCircle.png">
+        <img class="coloredCircle" alt="purple" onclick="changeBoardColor('#2e0015', '#33222a')" src="D:\icons\icons\pinkCircle.png">
+        <select id="rightColorSelector" onchange="rightScore.style.color=this.value; rightTeam.style.color=this.value">
+            <option selected value="#0101DF">أزرق</option>
+            <option value="#da0000">أحمر</option>
+            <option value="#FF8621">برتقالي</option>
+            <option value="#000000">أسود</option>
+            <option value="#FF00FF">وردي</option>
+            <option value="#8A0886">بنفسجي</option>
+            <option value="#0c8c0f">أخضر</option>
+            <option value="#9C5151">بني</option>
+            <option value="#585858">رمادي</option>
+            <option value="gold">ذهبي</option>
+        </select>
+    </form>
+
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <th>
+                <input type="checkbox" id="leftCheck" checked>
+                <input value="200" class="score red" id="leftScore" size="20" type="text">
+                <input value="الشّمال" class="teamName red" id="leftTeam" size="20" type="text">
+                <img alt="إعدادات الألوان" src="icons/colorSettings.png" id="colorSettings" onclick="toggleSettingsForm()">
+                <input value="اليَمين" class="teamName blue" id="rightTeam" size="20" type="text">
+                <input value="200" class="score blue" id="rightScore" size="20" type="text">
+                <input type="checkbox" id="rightCheck">
+
+                <table id="mainBoard" align="center" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                        <tr>
+                            <td id="tab1" onclick="go(this.id)"><img alt="item1" src="icons/apple.png"></td>
+                            <td id="tab2" onclick="go(this.id)"><img alt="item2" src="icons/six.png"></td>
+                            <td id="tab3" onclick="go(this.id)"><img alt="item3" src="icons/five.png"></td>
+                            <td id="tab4" onclick="go(this.id)"><img alt="item4" src="icons/four.png"></td>
+                            <td id="tab5" onclick="go(this.id)"><img alt="item5" src="icons/three.png"></td>
+                            <td id="tab6" onclick="go(this.id)"><img alt="item6" src="icons/two.png"></td>
+                            <td id="tab7" onclick="go(this.id)"><img alt="item7" src="icons/one.png"></td>
+                            <td id="tab8" onclick="go(this.id)"><img alt="item8" src="icons/whatsapp.png"></td>
+                        </tr>
+                        <tr>
+                            <td id="tab9" onclick="go(this.id)"><img alt="item9" src="icons/samsung.png"></td>
+                            <td id="tab10" onclick="go(this.id)"><img alt="item10" src="icons/twelve.png"></td>
+                            <td id="tab11" onclick="go(this.id)"><img alt="item11" src="icons/eleven.png"></td>
+                            <td id="tab12" onclick="go(this.id)"><img alt="item12" src="icons/ten.png"></td>
+                            <td id="tab13" onclick="go(this.id)"><img alt="item13" src="icons/nine.png"></td>
+                            <td id="tab14" onclick="go(this.id)"><img alt="item14" src="icons/eight.png"></td>
+                            <td id="tab15" onclick="go(this.id)"><img alt="item15" src="icons/seven.png"></td>
+                            <td id="tab16" onclick="go(this.id)"><img alt="item16" src="icons/facebook.png"></td>
+                        </tr>
+                        <tr>
+                            <td id="tab17" onclick="go(this.id)"><img alt="item17" src="icons/huawei.png"></td>
+                            <td colspan="6" rowspan="5" id="centralTd">
+                                <div id="imageDiv">
+                                    <img src="icons/sd.png" alt="عنصر مركزي" id="pic00">
+                                    <input id="WeaponPower" type="text" placeholder="قوة السلاح">
+                                </div>
+                            </td>
+                            <td id="tab18" onclick="go(this.id)"><img alt="item18" src="icons/skype.png"></td>
+                        </tr>
+                        <tr>
+                            <td id="tab19" onclick="go(this.id)"><img alt="item19" src="icons/gmail.png"></td>
+                            <td id="tab20" onclick="go(this.id)"><img alt="item20" src="icons/social.png"></td>
+                        </tr>
+                        <tr>
+                            <td id="tab21" onclick="go(this.id)"><img alt="item21" src="icons/  microsoft.png"></td>
+                            <td id="tab22" onclick="go(this.id)"><img alt="item22" src="icons/messenger.png"></td>
+                        </tr>
+                        <tr>
+                            <td id="tab23" onclick="go(this.id)"><img alt="item23" src="icons/google-maps.png"></td>
+                            <td id="tab24" onclick="go(this.id)"><img alt="item24" src="icons/twitter.png"></td>
+                        </tr>
+                        <tr>
+                            <td id="tab25" onclick="go(this.id)"><img alt="item25" src="icons/starbucks.png"></td>
+                            <td id="tab26" onclick="go(this.id)"><img alt="item26" src="icons/tiktok.png"></td>
+                        </tr>
+                        <tr>
+                            <td id="tab27" onclick="go(this.id)"><img alt="item27" src="icons/netflix.png"></td>
+                            <td id="tab28" onclick="go(this.id)"><img alt="item28" src="icons/lion.png"></td>
+                            <td id="tab29" onclick="go(this.id)"><img alt="item29" src="icons/bee.png"></td>
+                            <td id="tab30" onclick="go(this.id)"><img alt="item30" src="icons/butterfly.png"></td>
+                            <td id="tab31" onclick="go(this.id)"><img alt="item31" src="icons/cow.png"></td>
+                            <td id="tab32" onclick="go(this.id)"><img alt="item32" src="icons/dolphin.png"></td>
+                            <td id="tab33" onclick="go(this.id)"><img alt="item33" src="icons/elephant.png"></td>
+                            <td id="tab34" onclick="go(this.id)"><img alt="item34" src="icons/snapchat.png"></td>
+                        </tr>
+                        <tr>
+                            <td id="tab35" onclick="go(this.id)"><img alt="item35" src="icons/lebanon.png"></td>
+                            <td id="tab36" onclick="go(this.id)"><img alt="item36" src="icons/iraq.png"></td>
+                            <td id="tab37" onclick="go(this.id)"><img alt="item37" src="icons/algeria.png"></td>
+                            <td id="tab38" onclick="go(this.id)"><img alt="item38" src="icons/jordan (1).png"></td>
+                            <td id="tab39" onclick="go(this.id)"><img alt="item39" src="icons/saudi-arabia.png"></td>
+                            <td id="tab40" onclick="go(this.id)"><img alt="item40" src="icons/morocco.png"></td>
+                            <td id="tab41" onclick="go(this.id)"><img alt="item41" src="icons/palestine.png"></td>
+                            <td id="tab42" onclick="go(this.id)"><img alt="item42" src="icons/syria.png"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button id="resetButton" onclick="resetGame()">إعادة تعيين اللعبة</button>
+                <button id="stopMusicButton" onclick="stopMusic()">إيقاف الموسيقى</button>
+            </th>
+        </tr>
+    </table>
+
+    <div id="confetti"></div>
+    <div id="gameOverMessage"></div>
+
+    <center>
+        <p><b><a href="#">جميع الحقوق محفوظة لعبة الحرب | طبول الحرب</a><br>
+        <a href="#">مطور: Moiyed Al Aiyeed</a></b></p>
+    </center>
+
+    <script>
+        // قائمة الصور/النقاط/الأصوات
+        const pointsData = [
+            { image: "points/0.png", points: 0, sound: "sounds/1.mp3", type: "normal" },
+            { image: "points/0 (2).png", points: 0, sound: "sounds/2.mp3", type: "normal" },
+            { image: "points/0 (3).png", points: 0, sound: "sounds/3.mp3", type: "normal" },
+            { image: "points/3.png", points: 3, sound: "sounds/5.mp3", type: "normal" },
+            { image: "points/1.png", points: 1, sound: "sounds/4.mp3", type: "normal" },
+            { image: "points/1 (2).png", points: 1, sound: "sounds/audioclip-1465563627000-2944.mp3", type: "normal" },
+            { image: "points/1 (3).png", points: 1, sound: "sounds/n-mbswt-kd-wn-khnzyr.mp3", type: "normal" },
+            { image: "points/4 (1).png", points: 4, sound: "sounds/oh-no-no-no-no-laugh.mp3", type: "normal" },
+            { image: "points/-3.png", points: -3, sound: "sounds/y-khr-shnw-hdh.mp3", type: "normal" },
+            { image: "points/2.png", points: 2, sound: "sounds/rkz-y-fshl.mp3", type: "normal" },
+            { image: "points/8 (2).png", points: 8, sound: "sounds/نهاية ماريو.mp3", type: "normal" },
+            { image: "points/15 (2).png", points: 15, sound: "sounds/15_2.mp3", type: "normal" },
+            { image: "points/-4.png", points: -4, sound: "sounds/رقم اربعة هيلب.mp3", type: "normal" },
+            { image: "points/25.png", points: 25, sound: "sounds/ابن سوريا تمثال من ذهب.mp3", type: "normal" },
+            { image: "points/3 (2).png", points: 3, sound: "sounds/ابن سوريا مين انت شو عم تساوي هون (mp3cut.net).mp3", type: "normal" },
+            { image: "points/5 (2).png", points: 5, sound: "sounds/انطيني وجهك تف عليه.mp3", type: "normal" },
+            { image: "points/25 (2).png", points: 25, sound: "sounds/funny-arab-guy.mp3", type: "normal" },
+            { image: "points/7 (2).png", points: 7, sound: "sounds/بكرا تندم ياجميل عادل امام.mp3", type: "normal" },
+            { image: "points/-5to5.png", points: 0, sound: "sounds/صوت ضحكة.mp3", type: "roulette" },
+            { image: "points/5.png", points: 5, sound: "sounds/ابن سوريا يلعن ام الشوتطن.mp3", type: "normal" },
+            { image: "points/5 (3).png", points: 5, sound: "sounds/ابو نبال نزعنالكم السكرة.mp3", type: "normal" },
+            { image: "points/9 (2).png", points: 9, sound: "sounds/خلاص خلاص خلاص صراخ مضحك.mp3", type: "normal" },
+            { image: "points/7.png", points: 7, sound: "sounds/ابو خليل شكد شفت ناس مدودة.mp3", type: "normal" },
+            { image: "points/8.png", points: 8, sound: "sounds/عايزه تفهمي افهمي توفيق عكاشه.mp3", type: "normal" },
+            { image: "points/10.png", points: 10, sound: "sounds/لو انك تحميلة مابشتريك.mp3", type: "normal" },
+            { image: "points/10 (2).png", points: 10, sound: "sounds/موسيقى الفشل.mp3", type: "normal" },
+            { image: "points/9.png", points: 9, sound: "sounds/76.mp3", type: "normal" },
+            { image: "points/12.png", points: 12, sound: "sounds/مفيش فايده مافيش فايده عمرو اديب.mp3", type: "normal" },
+            { image: "points/12 (2).png", points: 12, sound: "sounds/يعني لازم تيجبوا الكلام لنفسيكم يعني.mp3", type: "normal" },
+            { image: "points/11.png", points: 11, sound: "sounds/وين جنتي هارون الشمري.mp3", type: "normal" },
+            { image: "points/17 (2).png", points: 17, sound: "sounds/لأ لأ لأ انت بتهزر  عمرو اديب.mp3", type: "normal" },
+            { image: "points/15.png", points: 15, sound: "sounds/عطيني قطراف راسك.mp3", type: "normal" },
+            { image: "points/13.png", points: 13, sound: "sounds/والله ماتقدرلي ياكواد.mp3", type: "normal" },
+            { image: "points/18.png", points: 18, sound: "sounds/زبلعجي ولك.mp3", type: "normal" },
+            { image: "points/17.png", points: 17, sound: "sounds/انت وين لكيت هاي الكلاوات.mp3", type: "normal" },
+            { image: "points/17 (3).png", points: 17, sound: "sounds/اخدو زعيم اخدو.mp3", type: "normal" },
+            { image: "points/21.png", points: 21, sound: "sounds/ابن سوريا لو امك تولدك من جديد.mp3", type: "normal" },
+            { image: "points/21 (2).png", points: 21, sound: "sounds/ابن سوريا طوبز مشتري ايباد جديد.mp3", type: "normal" },
+            { image: "points/20.png", points: 20, sound: "sounds/mbappe-goalllllll.mp3", type: "normal" },
+            { image: "points/43.png", points: 43, sound: "sounds/nuclear-alarm-siren.mp3", type: "normal" },
+            { image: "points/30.png", points: 30, sound: "sounds/ابن سوريا تمثال من ذهب.mp3", type: "normal" },
+            { image: "points/prison.png", points: 0, sound: "sounds/police-siren-for-loop.mp3", type: "prison" }
+        ];
+
+        // تخزين الصور/النقاط لكل خلية
+        let cellData = {};
+        let gameActive = true;
+        let skipTurns = 0;
+        let lastTeam = 'left';
+        let currentAudio = null; // متغير لتتبع الموسيقى الحالية
+
+        // تحميل الإعدادات وتوزيع الصور عشوائيًا
+        function loadOptions() {
+            document.getElementById('leftScore').value = '200';
+            document.getElementById('rightScore').value = '200';
+            document.getElementById('leftCheck').checked = true;
+            document.getElementById('rightCheck').checked = false;
+            lastTeam = 'left';
+            skipTurns = 0;
+            resetCentralImage();
+            distributePoints();
+        }
+
+        // توزيع الصور/النقاط عشوائيًا
+        function distributePoints() {
+            cellData = {};
+            const cells = Array.from({length: 42}, (_, i) => `tab${i + 1}`);
+            const assignments = [...pointsData];
+            for (let i = assignments.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [assignments[i], assignments[j]] = [assignments[j], assignments[i]];
+            }
+            cells.forEach((cellId, index) => {
+                cellData[cellId] = {
+                    image: assignments[index].image,
+                    points: assignments[index].points,
+                    sound: assignments[index].sound,
+                    type: assignments[index].type,
+                    used: false
+                };
+            });
+            resetCellImages();
+        }
+
+        // إعادة الصور الأصلية للخلايا
+        function resetCellImages() {
+            const originalImages = [
+                "icons/apple.png", "icons/six.png", "icons/five.png", "icons/four.png",
+                "icons/three.png", "icons/two.png", "icons/one.png", "icons/whatsapp.png",
+                "icons/samsung.png", "icons/twelve.png", "icons/eleven.png", "icons/ten.png",
+                "icons/nine.png", "icons/eight.png", "icons/seven.png", "icons/facebook.png",
+                "icons/huawei.png", "icons/skype.png", "icons/gmail.png", "icons/social.png",
+                "icons/microsoft.png", "icons/messenger.png", "icons/google-maps.png", "icons/twitter.png",
+                "icons/starbucks.png", "icons/tiktok.png", "icons/netflix.png", "icons/lion.png",
+                "icons/bee.png", "icons/butterfly.png", "icons/cow.png", "icons/dolphin.png",
+                "icons/elephant.png", "icons/snapchat.png", "icons/lebanon.png", "icons/iraq.png",
+                "icons/algeria.png", "icons/jordan (1).png", "icons/saudi-arabia.png", "icons/morocco.png",
+                "icons/palestine.png", "icons/syria.png"
+            ];
+            for (let i = 1; i <= 42; i++) {
+                const cell = document.getElementById(`tab${i}`);
+                cell.querySelector('img').src = originalImages[i - 1];
+                cellData[`tab${i}`].used = false;
+            }
+        }
+
+        // النافذة المنبثقة
+        function myFunction() {
+            var popup = document.getElementById("myPopup");
+            popup.classList.toggle("show");
+        }
+
+        // إظهار/إخفاء إعدادات الألوان
+        function toggleSettingsForm() {
+            var form = document.getElementById('settingsForm');
+            form.style.visibility = form.style.visibility === 'visible' ? 'hidden' : 'visible';
+        }
+
+        // تغيير لون اللوحة
+        function changeBoardColor(primaryColor, secondaryColor) {
+            document.getElementById('mainBoard').style.backgroundColor = primaryColor;
+        }
+
+        // إيقاف الموسيقى الحالية
+        function stopMusic() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0; // إعادة الموسيقى إلى البداية
+                currentAudio = null;
+            }
+        }
+
+        // النقر على خلايا اللوحة
+        function go(tabId) {
+            if (!gameActive || cellData[tabId].used) return;
+
+            const leftCheck = document.getElementById('leftCheck').checked;
+            const rightCheck = document.getElementById('rightCheck').checked;
+
+            if (!leftCheck && !rightCheck) {
+                alert('يرجى تحديد فريق للعب!');
+                return;
+            }
+
+            const data = cellData[tabId];
+            let points = data.points;
+
+            // تحديث النقاط
+            let leftScore = parseInt(document.getElementById('leftScore').value);
+            let rightScore = parseInt(document.getElementById('rightScore').value);
+
+            // التحقق من نوع الحدث
+            if (data.type === 'roulette') {
+                points = Math.floor(Math.random() * 11) - 5;
+                document.getElementById('WeaponPower').value = `${points > 0 ? '+' : ''}${points} نقاط`;
+            } else if (data.type === 'prison') {
+                skipTurns = 2;
+                document.getElementById('WeaponPower').value = 'تم سجن الفريق!';
+            } else {
+                document.getElementById('WeaponPower').value = `${points} نقطة`;
+            }
+
+            // تغيير الصورة المركزية
+            document.getElementById('pic00').src = data.image;
+
+            // إيقاف الموسيقى الحالية إذا كانت تعمل
+            stopMusic();
+
+            // تشغيل الموسيقى الجديدة
+            const audio = new Audio(data.sound);
+            audio.play().catch(() => console.log("خطأ في تشغيل الصوت"));
+            currentAudio = audio; // تحديث الموسيقى الحالية
+
+            // تحديث النقاط بناءً على الحدث
+            if (data.type !== 'prison') {
+                if (data.type === 'roulette') {
+                    if (points < 0) {
+                        if (leftCheck) {
+                            rightScore -= points;
+                        } else {
+                            leftScore -= points;
+                        }
+                    } else {
+                        if (leftCheck) {
+                            rightScore -= points;
+                        } else {
+                            leftScore -= points;
+                        }
+                    }
+                } else {
+                    if (leftCheck) {
+                        rightScore -= points;
+                    } else {
+                        leftScore -= points;
+                    }
+                }
+                document.getElementById('leftScore').value = leftScore;
+                document.getElementById('rightScore').value = rightScore;
+            }
+
+            // تحويل الخلية إلى أيقونة X
+            document.getElementById(tabId).querySelector('img').src = "icons/close.png";
+            cellData[tabId].used = true;
+
+            // التحقق من نهاية اللعبة
+            if (leftScore <= 0) {
+                showGameOver('مبرووووووووك للفريق الأزرق 🔵!');
+                return;
+            } else if (rightScore <= 0) {
+                showGameOver('مبرووووووووك للفريق الأحمر 🔴!');
+                return;
+            }
+
+            // إدارة الدورات
+            if (skipTurns > 0) {
+                skipTurns--;
+            } else {
+                if (leftCheck) {
+                    document.getElementById('leftCheck').checked = false;
+                    document.getElementById('rightCheck').checked = true;
+                    lastTeam = 'right';
+                } else {
+                    document.getElementById('rightCheck').checked = false;
+                    document.getElementById('leftCheck').checked = true;
+                    lastTeam = 'left';
+                }
+            }
+        }
+
+        // إعادة تعيين الصورة المركزية
+        function resetCentralImage() {
+            document.getElementById('pic00').src = "icons/sd.png";
+            document.getElementById('WeaponPower').value = '';
+        }
+
+        // إعادة تعيين اللعبة
+        function resetGame() {
+            gameActive = true;
+            document.getElementById('leftScore').value = '200';
+            document.getElementById('rightScore').value = '200';
+            document.getElementById('leftCheck').checked = true;
+            document.getElementById('rightCheck').checked = false;
+            lastTeam = 'left';
+            skipTurns = 0;
+            stopMusic(); // إيقاف الموسيقى عند إعادة التعيين
+            resetCentralImage();
+            distributePoints();
+            document.getElementById('confetti').style.display = 'none';
+            document.getElementById('gameOverMessage').style.display = 'none';
+        }
+
+        // إظهار تأثير قصاصات ورقية ورسالة النهاية
+        function showGameOver(message) {
+            gameActive = false;
+            stopMusic(); // إيقاف الموسيقى عند انتهاء اللعبة
+            const confettiContainer = document.getElementById('confetti');
+            confettiContainer.innerHTML = '';
+            confettiContainer.style.display = 'block';
+
+            for (let i = 0; i < 100; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + 'vw';
+                piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                piece.style.animationDelay = Math.random() * 3 + 's';
+                confettiContainer.appendChild(piece);
+            }
+
+            const gameOverMessage = document.getElementById('gameOverMessage');
+            gameOverMessage.textContent = message;
+            gameOverMessage.style.display = 'block';
+        }
+    </script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'930dc9af4dbcbabf',t:'MTc0NDc0NDY5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>
