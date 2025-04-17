@@ -37,7 +37,7 @@
             background-color: #d1d1d1;
         }
         #mainBoard td {
-            width: 75px;
+            width: 75px; /* العرض المعدل */
             height: 60px;
             text-align: center;
             cursor: pointer;
@@ -48,7 +48,7 @@
         }
         #centralTd {
             background-color: #211a0542;
-            width: 400px;
+            width: 480px; /* تعديل العرض ليتناسب مع الخلايا الجديدة */
             height: 400px;
             position: relative;
         }
@@ -79,7 +79,7 @@
             margin: 5px;
             text-align: center;
             border: 1px solid #ccc;
-            font-size: 36px; /* تعديل حجم الخط لأسماء الفريقين والنقاط */
+            font-size: 36px;
         }
         .coloredCircle {
             width: 30px;
@@ -192,14 +192,25 @@
             display: none;
         }
         @media (max-width: 768px) {
-            #mainBoard td { width: 40px; height: 40px; }
-            #mainBoard img { width: 30px; height: 30px; }
-            #centralTd { width: 200px; height: 200px; }
+            #mainBoard td { 
+                width: 50px;
+                height: 40px; 
+            }
+            #mainBoard img { 
+                width: 30px; 
+                height: 30px; 
+            }
+            #centralTd { 
+                width: 320px; /* تعديل العرض للشاشات الصغيرة */
+                height: 200px; 
+            }
             .score, .teamName { 
                 width: 100px; 
-                font-size: 34px; /* تعديل حجم الخط للشاشات الصغيرة */
+                font-size: 34px;
             }
-            #settingsForm { width: 100%; }
+            #settingsForm { 
+                width: 100%; 
+            }
         }
         #changeColorsButton {
             padding: 10px 20px;
@@ -214,7 +225,7 @@
             background-color: #555;
         }
         .color-box {
-            display: none; /* مخفي بشكل افتراضي */
+            display: none;
             background-color: #fff;
             border: 2px solid #333;
             border-radius: 10px;
@@ -228,14 +239,28 @@
             display: block;
         }
         .color-box .coloredCircle {
-            width: 40px; /* زيادة حجم الدوائر لتبدو أجمل */
+            width: 40px;
             height: 40px;
             margin: 5px;
             cursor: pointer;
             transition: transform 0.2s ease;
         }
         .color-box .coloredCircle:hover {
-            transform: scale(1.2); /* تأثير تكبير عند التمرير */
+            transform: scale(1.2);
+        }
+        .team-container {
+            display: inline-block;
+            text-align: center;
+            vertical-align: top;
+        }
+        .team-container input[type="checkbox"] {
+            display: block;
+            margin: 0 auto 5px auto;
+        }
+        .team-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
         }
     </style>
 </head>
@@ -286,13 +311,21 @@
     <table border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
             <th>
-                <input type="checkbox" id="leftCheck" checked>
-                <input value="200" class="score red" id="leftScore" size="20" type="text">
-                <input value="الشّمال" class="teamName red" id="leftTeam" size="20" type="text">
+                <div class="team-container">
+                    <input type="checkbox" id="leftCheck" checked>
+                    <div class="team-inputs">
+                        <input value="200" class="score red" id="leftScore" size="20" type="text">
+                        <input value="الشّمال" class="teamName red" id="leftTeam" size="20" type="text">
+                    </div>
+                </div>
                 <img alt="إعدادات الألوان" src="icons/struggle.png" id="colorSettings" onclick="toggleSettingsForm()" style="width: 30px; height: 30px;">
-                <input value="اليَمين" class="teamName blue" id="rightTeam" size="20" type="text">
-                <input value="200" class="score blue" id="rightScore" size="20" type="text">
-                <input type="checkbox" id="rightCheck">
+                <div class="team-container">
+                    <input type="checkbox" id="rightCheck">
+                    <div class="team-inputs">
+                        <input value="اليَمين" class="teamName blue" id="rightTeam" size="20" type="text">
+                        <input value="200" class="score blue" id="rightScore" size="20" type="text">
+                    </div>
+                </div>
 
                 <table id="mainBoard" align="center" border="0" cellpadding="0" cellspacing="0">
                     <tbody>
@@ -389,7 +422,6 @@
     </center>
 
     <script>
-        // قائمة الصور/النقاط/الأصوات
         const pointsData = [
             { image: "points/0.png", points: 0, sound: "sounds/1.mp3", type: "normal" },
             { image: "points/0 (2).png", points: 0, sound: "sounds/2.mp3", type: "normal" },
@@ -435,14 +467,12 @@
             { image: "points/prison.png", points: 0, sound: "sounds/police-siren-for-loop.mp3", type: "prison" }
         ];
 
-        // تخزين الصور/النقاط لكل خلية
         let cellData = {};
         let gameActive = true;
         let skipTurns = 0;
         let lastTeam = 'left';
-        let currentAudio = null; // متغير لتتبع الموسيقى الحالية
+        let currentAudio = null;
 
-        // تحميل الإعدادات وتوزيع الصور عشوائيًا
         function loadOptions() {
             document.getElementById('leftScore').value = '200';
             document.getElementById('rightScore').value = '200';
@@ -454,7 +484,6 @@
             distributePoints();
         }
 
-        // توزيع الصور/النقاط عشوائيًا
         function distributePoints() {
             cellData = {};
             const cells = Array.from({length: 42}, (_, i) => `tab${i + 1}`);
@@ -475,7 +504,6 @@
             resetCellImages();
         }
 
-        // إعادة الصور الأصلية للخلايا
         function resetCellImages() {
             const originalImages = [
                 "icons/apple.png", "icons/six.png", "icons/five.png", "icons/four.png",
@@ -497,39 +525,33 @@
             }
         }
 
-        // النافذة المنبثقة
         function myFunction() {
             var popup = document.getElementById("myPopup");
             popup.classList.toggle("show");
         }
 
-        // إظهار/إخفاء إعدادات الألوان
         function toggleSettingsForm() {
             var form = document.getElementById('settingsForm');
             form.style.visibility = form.style.visibility === 'visible' ? 'hidden' : 'visible';
         }
 
-        // إظهار/إخفاء علبة الألوان
         function toggleColorBox() {
             var colorBox = document.getElementById("colorBox");
             colorBox.classList.toggle("show");
         }
 
-        // تغيير لون اللوحة
         function changeBoardColor(primaryColor, secondaryColor) {
             document.getElementById('mainBoard').style.backgroundColor = primaryColor;
         }
 
-        // إيقاف الموسيقى الحالية
         function stopMusic() {
             if (currentAudio) {
                 currentAudio.pause();
-                currentAudio.currentTime = 0; // إعادة الموسيقى إلى البداية
+                currentAudio.currentTime = 0;
                 currentAudio = null;
             }
         }
 
-        // النقر على خلايا اللوحة
         function go(tabId) {
             if (!gameActive || cellData[tabId].used) return;
 
@@ -544,11 +566,9 @@
             const data = cellData[tabId];
             let points = data.points;
 
-            // تحديث النقاط
             let leftScore = parseInt(document.getElementById('leftScore').value);
             let rightScore = parseInt(document.getElementById('rightScore').value);
 
-            // التحقق من نوع الحدث
             if (data.type === 'roulette') {
                 points = Math.floor(Math.random() * 11) - 5;
                 document.getElementById('WeaponPower').value = `${points > 0 ? '+' : ''}${points} نقاط`;
@@ -559,18 +579,14 @@
                 document.getElementById('WeaponPower').value = `${points} نقطة`;
             }
 
-            // تغيير الصورة المركزية
             document.getElementById('pic00').src = data.image;
 
-            // إيقاف الموسيقى الحالية إذا كانت تعمل
             stopMusic();
 
-            // تشغيل الموسيقى الجديدة
             const audio = new Audio(data.sound);
             audio.play().catch(() => console.log("خطأ في تشغيل الصوت"));
-            currentAudio = audio; // تحديث الموسيقى الحالية
+            currentAudio = audio;
 
-            // تحديث النقاط بناءً على الحدث
             if (data.type !== 'prison') {
                 if (data.type === 'roulette') {
                     if (points < 0) {
@@ -597,11 +613,9 @@
                 document.getElementById('rightScore').value = rightScore;
             }
 
-            // تحويل الخلية إلى أيقونة X
             document.getElementById(tabId).querySelector('img').src = "icons/close.png";
             cellData[tabId].used = true;
 
-            // التحقق من نهاية اللعبة
             if (leftScore <= 0) {
                 showGameOver('مبرووووووووك للفريق الأزرق 🔵!');
                 return;
@@ -610,7 +624,6 @@
                 return;
             }
 
-            // إدارة الدورات
             if (skipTurns > 0) {
                 skipTurns--;
             } else {
@@ -626,13 +639,11 @@
             }
         }
 
-        // إعادة تعيين الصورة المركزية
         function resetCentralImage() {
             document.getElementById('pic00').src = "icons/cinterphoto.png";
             document.getElementById('WeaponPower').value = '';
         }
 
-        // إعادة تعيين اللعبة
         function resetGame() {
             gameActive = true;
             document.getElementById('leftScore').value = '200';
@@ -641,17 +652,16 @@
             document.getElementById('rightCheck').checked = false;
             lastTeam = 'left';
             skipTurns = 0;
-            stopMusic(); // إيقاف الموسيقى عند إعادة التعيين
+            stopMusic();
             resetCentralImage();
             distributePoints();
             document.getElementById('confetti').style.display = 'none';
             document.getElementById('gameOverMessage').style.display = 'none';
         }
 
-        // إظهار تأثير قصاصات ورقية ورسالة النهاية
         function showGameOver(message) {
             gameActive = false;
-            stopMusic(); // إيقاف الموسيقى عند انتهاء اللعبة
+            stopMusic();
             const confettiContainer = document.getElementById('confetti');
             confettiContainer.innerHTML = '';
             confettiContainer.style.display = 'block';
@@ -671,6 +681,6 @@
         }
     </script>
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'930dc9af4dbcbabf',t:'MTc0NDc0NDY5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'931af0c448fc456a',t:'MTc0NDg4MjYxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'931af0c448fc456a',t:'MTc0NDg4MjYxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
