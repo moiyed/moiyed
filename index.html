@@ -37,7 +37,7 @@
             background-color: #d1d1d1;
         }
         #mainBoard td {
-            width: 75px; /* العرض المعدل */
+            width: 75px;
             height: 60px;
             text-align: center;
             cursor: pointer;
@@ -48,7 +48,7 @@
         }
         #centralTd {
             background-color: #211a0542;
-            width: 480px; /* تعديل العرض ليتناسب مع الخلايا الجديدة */
+            width: 480px;
             height: 400px;
             position: relative;
         }
@@ -87,12 +87,6 @@
             margin: 5px;
             cursor: pointer;
             display: inline-block;
-        }
-        #settingsForm {
-            visibility: hidden;
-            margin: 10px auto;
-            width: 600px;
-            text-align: center;
         }
         .popup {
             position: relative;
@@ -135,7 +129,7 @@
         .blue { color: #0101DF; }
         .red { color: #da0000; }
         .logo {
-            margin-top: 20px;
+            margin-top: 10px;
             margin-bottom: 10px;
         }
         #resetButton, #stopMusicButton {
@@ -201,15 +195,17 @@
                 height: 30px; 
             }
             #centralTd { 
-                width: 320px; /* تعديل العرض للشاشات الصغيرة */
-                height: 200px; 
+                width: 360px; /* زيادة العرض ليتناسب مع الشاشات الصغيرة */
+                height: 280px; /* زيادة الارتفاع */
+            }
+            #centralTd img { 
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* لضمان ملء الصورة للمساحة دون تشويه */
             }
             .score, .teamName { 
                 width: 100px; 
                 font-size: 34px;
-            }
-            #settingsForm { 
-                width: 100%; 
             }
         }
         #changeColorsButton {
@@ -248,14 +244,36 @@
         .color-box .coloredCircle:hover {
             transform: scale(1.2);
         }
-        .team-container {
-            display: inline-block;
-            text-align: center;
-            vertical-align: top;
+        .teams-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
         }
-        .team-container input[type="checkbox"] {
-            display: block;
-            margin: 0 auto 5px auto;
+        .teams-wrapper img#colorSettings {
+            width: 30px;
+            height: 30px;
+            margin: 0 5px;
+        }
+        .team-container {
+            position: relative;
+            text-align: center;
+            height: 80px;
+            width: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .team-container img.arrow {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
         }
         .team-inputs {
             display: flex;
@@ -265,65 +283,33 @@
     </style>
 </head>
 <body onload="loadOptions()">
-    <div class="logo" style="margin-top: 2px;">
+    <div class="logo" style="margin-top: 10px;">
         <a href="#"><img src="icons/logo.png" alt="شعار اللعبة"></a>
     </div>
 
-    <div class="popup" onclick="myFunction()" style="margin-top: 0px;">
+    <div class="popup" onclick="myFunction()" style="margin-top: 0px; margin-bottom: 10px;">
         <span class="popuptext" id="myPopup">Moiyed Al Aiyeed</span>
         <span style="font-weight: bold; background: linear-gradient(to right, black 100%, silver 0%); -webkit-background-clip: text; color: transparent;">Moiyed Al Aiyeed</span>
     </div>
 
-    <form id="settingsForm">
-        <select id="leftColorSelector" onchange="leftScore.style.color=this.value; leftTeam.style.color=this.value">
-            <option selected value="#da0000">أحمر</option>
-            <option value="#0101DF">أزرق</option>
-            <option value="#FF8621">برتقالي</option>
-            <option value="#000000">أسود</option>
-            <option value="#FF00FF">وردي</option>
-            <option value="#8A0886">بنفسجي</option>
-            <option value="#0c8c0f">أخضر</option>
-            <option value="#9C5151">بني</option>
-            <option value="#585858">رمادي</option>
-            <option value="gold">ذهبي</option>
-        </select>
-        <img class="coloredCircle" alt="red" onclick="changeBoardColor('#FF0000', '#d1d1d1')" src="icons/redCircle.png">
-        <img class="coloredCircle" alt="blue" onclick="changeBoardColor('#00CED1', '#d1d1d1')" src="icons/trkwazCircle.png">
-        <img class="coloredCircle" alt="green" onclick="changeBoardColor('#008000', '#d1d1d1')" src="icons/greenCircle.png">
-        <img class="coloredCircle" alt="purple" onclick="changeBoardColor('#800080', '#d1d1d1')" src="icons/purpleCircle.png">
-        <img class="coloredCircle" alt="gray" onclick="changeBoardColor('#808080', '#3a4659')" src="icons/grayCircle.png">
-        <img class="coloredCircle" alt="palBlue" onclick="changeBoardColor('#87CEEB', '#c2bbba')" src="icons/palBlueCircle.png">
-        <img class="coloredCircle" alt="pink" onclick="changeBoardColor('#FF69B4', '#33222a')" src="icons/pinkCircle.png">
-        <select id="rightColorSelector" onchange="rightScore.style.color=this.value; rightTeam.style.color=this.value">
-            <option selected value="#0101DF">أزرق</option>
-            <option value="#da0000">أحمر</option>
-            <option value="#FF8621">برتقالي</option>
-            <option value="#000000">أسود</option>
-            <option value="#FF00FF">وردي</option>
-            <option value="#8A0886">بنفسجي</option>
-            <option value="#0c8c0f">أخضر</option>
-            <option value="#9C5151">بني</option>
-            <option value="#585858">رمادي</option>
-            <option value="gold">ذهبي</option>
-        </select>
-    </form>
-
     <table border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
             <th>
-                <div class="team-container">
-                    <input type="checkbox" id="leftCheck" checked>
-                    <div class="team-inputs">
-                        <input value="200" class="score red" id="leftScore" size="20" type="text">
-                        <input value="الشّمال" class="teamName red" id="leftTeam" size="20" type="text">
+                <div class="teams-wrapper">
+                    <div class="team-container">
+                        <img src="icons/arrow.png" id="leftArrow" class="arrow" style="display: block;">
+                        <div class="team-inputs">
+                            <input value="200" class="score red" id="leftScore" size="20" type="text" readonly>
+                            <input value="الشّمال" class="teamName red" id="leftTeam" size="20" type="text">
+                        </div>
                     </div>
-                </div>
-                <img alt="إعدادات الألوان" src="icons/struggle.png" id="colorSettings" onclick="toggleSettingsForm()" style="width: 30px; height: 30px;">
-                <div class="team-container">
-                    <input type="checkbox" id="rightCheck">
-                    <div class="team-inputs">
-                        <input value="اليَمين" class="teamName blue" id="rightTeam" size="20" type="text">
-                        <input value="200" class="score blue" id="rightScore" size="20" type="text">
+                    <img alt="إعدادات الألوان" src="icons/struggle.png" id="colorSettings" style="width: 50px; height: 50px; align-self: center;">
+                    <div class="team-container">
+                        <img src="icons/arrow.png" id="rightArrow" class="arrow" style="display: none;">
+                        <div class="team-inputs">
+                            <input value="اليَمين" class="teamName blue" id="rightTeam" size="20" type="text">
+                            <input value="200" class="score blue" id="rightScore" size="20" type="text" readonly>
+                        </div>
                     </div>
                 </div>
 
@@ -476,8 +462,8 @@
         function loadOptions() {
             document.getElementById('leftScore').value = '200';
             document.getElementById('rightScore').value = '200';
-            document.getElementById('leftCheck').checked = true;
-            document.getElementById('rightCheck').checked = false;
+            document.getElementById('leftArrow').style.display = 'block';
+            document.getElementById('rightArrow').style.display = 'none';
             lastTeam = 'left';
             skipTurns = 0;
             resetCentralImage();
@@ -530,11 +516,6 @@
             popup.classList.toggle("show");
         }
 
-        function toggleSettingsForm() {
-            var form = document.getElementById('settingsForm');
-            form.style.visibility = form.style.visibility === 'visible' ? 'hidden' : 'visible';
-        }
-
         function toggleColorBox() {
             var colorBox = document.getElementById("colorBox");
             colorBox.classList.toggle("show");
@@ -555,10 +536,10 @@
         function go(tabId) {
             if (!gameActive || cellData[tabId].used) return;
 
-            const leftCheck = document.getElementById('leftCheck').checked;
-            const rightCheck = document.getElementById('rightCheck').checked;
+            const leftArrowVisible = document.getElementById('leftArrow').style.display === 'block';
+            const rightArrowVisible = document.getElementById('rightArrow').style.display === 'block';
 
-            if (!leftCheck && !rightCheck) {
+            if (!leftArrowVisible && !rightArrowVisible) {
                 alert('يرجى تحديد فريق للعب!');
                 return;
             }
@@ -590,20 +571,20 @@
             if (data.type !== 'prison') {
                 if (data.type === 'roulette') {
                     if (points < 0) {
-                        if (leftCheck) {
+                        if (leftArrowVisible) {
                             rightScore -= points;
                         } else {
                             leftScore -= points;
                         }
                     } else {
-                        if (leftCheck) {
+                        if (leftArrowVisible) {
                             rightScore -= points;
                         } else {
                             leftScore -= points;
                         }
                     }
                 } else {
-                    if (leftCheck) {
+                    if (leftArrowVisible) {
                         rightScore -= points;
                     } else {
                         leftScore -= points;
@@ -627,13 +608,13 @@
             if (skipTurns > 0) {
                 skipTurns--;
             } else {
-                if (leftCheck) {
-                    document.getElementById('leftCheck').checked = false;
-                    document.getElementById('rightCheck').checked = true;
+                if (leftArrowVisible) {
+                    document.getElementById('leftArrow').style.display = 'none';
+                    document.getElementById('rightArrow').style.display = 'block';
                     lastTeam = 'right';
                 } else {
-                    document.getElementById('rightCheck').checked = false;
-                    document.getElementById('leftCheck').checked = true;
+                    document.getElementById('rightArrow').style.display = 'none';
+                    document.getElementById('leftArrow').style.display = 'block';
                     lastTeam = 'left';
                 }
             }
@@ -648,8 +629,8 @@
             gameActive = true;
             document.getElementById('leftScore').value = '200';
             document.getElementById('rightScore').value = '200';
-            document.getElementById('leftCheck').checked = true;
-            document.getElementById('rightCheck').checked = false;
+            document.getElementById('leftArrow').style.display = 'block';
+            document.getElementById('rightArrow').style.display = 'none';
             lastTeam = 'left';
             skipTurns = 0;
             stopMusic();
@@ -682,5 +663,5 @@
     </script>
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'930dc9af4dbcbabf',t:'MTc0NDc0NDY5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'931af0c448fc456a',t:'MTc0NDg4MjYxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'931da6e539c58832',t:'MTc0NDkxMTA0My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
