@@ -74,11 +74,12 @@
             opacity: 0;
         }
         .score, .teamName {
-            width: 240px;
-            padding: 10px;
-            margin: 10px;
+            width: 120px;
+            padding: 5px;
+            margin: 5px;
             text-align: center;
-            border: 2px solid #ccc;
+            border: 1px solid #ccc;
+            .score, .teamName {
         }
         .coloredCircle {
             width: 30px;
@@ -194,7 +195,10 @@
             #mainBoard td { width: 40px; height: 40px; }
             #mainBoard img { width: 30px; height: 30px; }
             #centralTd { width: 200px; height: 200px; }
-            .score, .teamName { width: 300px; }
+            .score, .teamName { 
+                width: 110px; 
+                font-size: 16px; /* إضافة حجم نص للشاشات الصغيرة */
+            }
             #settingsForm { width: 100%; }
         }
         #changeColorsButton {
