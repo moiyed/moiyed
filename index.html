@@ -7,8 +7,7 @@
     <meta http-equiv="pragma" content="no-cache">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="لعبة الحرب التفاعلية، دردشة صوتية، ومسابقات جماعية">
-    <meta name="keywords" content="لعبة الحرب, طبول الحرب, دردشة صوتية, رومات ويفو, لعبة تفاعلية, لعبة طبول الحرب, طبول الحرب ويفو, لعبة طبول الحرب لقانا">
-    <meta name="google-site-verification" content="Dw49_xHlFGwxE0NI3VbUzD6EOiJ9soXA_gU_vPxQTWg" />
+    <meta name="keywords" content="لعبة الحرب, طبول الحرب, دردشة صوتية, رومات ويفو, لعبة تفاعلية">
     <title>لعبة الحرب | طبول الحرب</title>
     <link rel="shortcut icon" href="icons/sword.png">
     <style>
@@ -225,9 +224,9 @@
         <img class="coloredCircle" alt="blue" onclick="changeBoardColor('#24759b', '#d1d1d1')" src="icons/trkwazCircle.png">
         <img class="coloredCircle" alt="green" onclick="changeBoardColor('#0b721b', '#d1d1d1')" src="icons/greenCircle.png">
         <img class="coloredCircle" alt="purple" onclick="changeBoardColor('#8c26ad', '#d1d1d1')" src="icons/purpleCircle.png">
-        <img class="coloredCircle" alt="silver" onclick="changeBoardColor('#46494d', '#3a4659')" src="D:\icons\icons\grayCircle.png">
-        <img class="coloredCircle" alt="white" onclick="changeBoardColor('#f7f3f2', '#c2bbba')" src="D:\icons\icons\palBlueCircle.png">
-        <img class="coloredCircle" alt="yello" onclick="changeBoardColor('#2e0015', '#33222a')" src="D:\icons\icons\strongGrayCircle.png">
+        <img class="coloredCircle" alt="purple" onclick="changeBoardColor('#46494d', '#3a4659')" src="icons\icons\grayCircle.png">
+        <img class="coloredCircle" alt="purple" onclick="changeBoardColor('#f7f3f2', '#c2bbba')" src="icons\icons\palBlueCircle.png">
+        <img class="coloredCircle" alt="purple" onclick="changeBoardColor('#2e0015', '#33222a')" src="icons\icons\pinkCircle.png">
         <select id="rightColorSelector" onchange="rightScore.style.color=this.value; rightTeam.style.color=this.value">
             <option selected value="#0101DF">أزرق</option>
             <option value="#da0000">أحمر</option>
@@ -279,7 +278,7 @@
                             <td id="tab17" onclick="go(this.id)"><img alt="item17" src="icons/huawei.png"></td>
                             <td colspan="6" rowspan="5" id="centralTd">
                                 <div id="imageDiv">
-                                    <img src="D:\icons\icons\cinterphoto.png" alt="عنصر مركزي" id="pic00">
+                                    <img src="icons/cinterphoto.png" alt="عنصر مركزي" id="pic00">
                                     <input id="WeaponPower" type="text" placeholder="قوة السلاح">
                                 </div>
                             </td>
@@ -571,7 +570,7 @@
 
         // إعادة تعيين الصورة المركزية
         function resetCentralImage() {
-            document.getElementById('pic00').src = "D:\icons\icons\cinterphoto.png";
+            document.getElementById('pic00').src = "icons/cinterphoto.png";
             document.getElementById('WeaponPower').value = '';
         }
 
@@ -614,5 +613,5 @@
         }
     </script>
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'930dc9af4dbcbabf',t:'MTc0NDc0NDY5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'931af0c448fc456a',t:'MTc0NDg4MjYxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
