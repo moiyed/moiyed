@@ -536,48 +536,68 @@
             }
         }
 
-        function go(tabId) {
-            if (!gameActive || cellData[tabId].used) return;
-
-            const leftArrowVisible = document.getElementById('leftArrow').style.display === 'block';
-            const rightArrowVisible = document.getElementById('rightArrow').style.display === 'block';
-
-            if (!leftArrowVisible && !rightArrowVisible) {
-                alert('يرجى تحديد فريق للعب!');
-                return;
-            }
-
-            const data = cellData[tabId];
-            let points = data.points;
-
-            let leftScore = parseInt(document.getElementById('leftScore').value);
-            let rightScore = parseInt(document.getElementById('rightScore').value);
-
-            if (data.type === 'roulette') {
-                points = Math.floor(Math.random() * 11) - 5;
-                document.getElementById('WeaponPower').value = `${points > 0 ? '+' : ''}${points} نقاط`;
-            } else if (data.type === 'prison') {
-                skipTurns = 2;
-                document.getElementById('WeaponPower').value = 'تم سجن الفريق!';
-            } else {
-                document.getElementById('WeaponPower').value = `${points} نقطة`;
-            }
-
-            document.getElementById('pic00').src = data.image;
-
-            stopMusic();
-
-            const audio = new Audio(data.sound);
-            audio.play().catch(() => console.log("خطأ في تشغيل الصوت"));
-            currentAudio = audio;
-
-            if (data.type !== 'prison') {
+            function go(tabId) {
+                if (!gameActive || cellData[tabId].used) return;
+            
+                const leftArrowVisible = document.getElementById('leftArrow').style.display === 'block';
+                const rightArrowVisible = document.getElementById('rightArrow').style.display === 'block';
+            
+                if (!leftArrowVisible && !rightArrowVisible) {
+                    alert('يرجى تحديد فريق للعب!');
+                    return;
+                }
+            
+                const data = cellData[tabId];
+                let points = data.points;
+            
+                let leftScore = parseInt(document.getElementById('leftScore').value);
+                let rightScore = parseInt(document.getElementById('rightScore').value);
+            
                 if (data.type === 'roulette') {
-                    if (points < 0) {
-                        if (leftArrowVisible) {
-                            rightScore -= points;
+                    points = Math.floor(Math.random() * 11) - 5;
+                    document.getElementById('WeaponPower').value = `${points > 0 ? '+' : ''}${points} نقاط`;
+                } else if (data.type === 'prison') {
+                    skipTurns = 2; // نضع 2 لضمان أن الفريق الخصم يلعب دَورَين متتاليين
+                    if (leftArrowVisible) {
+                        document.getElementById('WeaponPower').value = 'تم سجن الفريق الأحمر!';
+                        // تبديل الدور فورًا إلى الفريق الأزرق
+                        document.getElementById('leftArrow').style.display = 'none';
+                        document.getElementById('rightArrow').style.display = 'block';
+                        lastTeam = 'right';
+                    } else {
+                        document.getElementById('WeaponPower').value = 'تم سجن الفريق الأزرق!';
+                        // تبديل الدور فورًا إلى الفريق الأحمر
+                        document.getElementById('rightArrow').style.display = 'none';
+                        document.getElementById('leftArrow').style.display = 'block';
+                        lastTeam = 'left';
+                    }
+                }
+                 else {
+                    document.getElementById('WeaponPower').value = `${points} نقطة`;
+                }
+            
+                document.getElementById('pic00').src = data.image;
+            
+                stopMusic();
+            
+                const audio = new Audio(data.sound);
+                audio.play().catch(() => console.log("خطأ في تشغيل الصوت"));
+                currentAudio = audio;
+            
+                if (data.type !== 'prison') {
+                    if (data.type === 'roulette') {
+                        if (points < 0) {
+                            if (leftArrowVisible) {
+                                rightScore -= points;
+                            } else {
+                                leftScore -= points;
+                            }
                         } else {
-                            leftScore -= points;
+                            if (leftArrowVisible) {
+                                rightScore -= points;
+                            } else {
+                                leftScore -= points;
+                            }
                         }
                     } else {
                         if (leftArrowVisible) {
@@ -586,42 +606,35 @@
                             leftScore -= points;
                         }
                     }
+                    document.getElementById('leftScore').value = leftScore;
+                    document.getElementById('rightScore').value = rightScore;
+                }
+            
+                document.getElementById(tabId).querySelector('img').src = "icons/close.png";
+                cellData[tabId].used = true;
+            
+                if (leftScore <= 0) {
+                    showGameOver('مبرووووووووك للفريق الأزرق 🔵!');
+                    return;
+                } else if (rightScore <= 0) {
+                    showGameOver('مبرووووووووك للفريق الأحمر 🔴!');
+                    return;
+                }
+            
+                if (skipTurns > 0) {
+                    skipTurns--;
                 } else {
                     if (leftArrowVisible) {
-                        rightScore -= points;
+                        document.getElementById('leftArrow').style.display = 'none';
+                        document.getElementById('rightArrow').style.display = 'block';
+                        lastTeam = 'right';
                     } else {
-                        leftScore -= points;
+                        document.getElementById('rightArrow').style.display = 'none';
+                        document.getElementById('leftArrow').style.display = 'block';
+                        lastTeam = 'left';
                     }
                 }
-                document.getElementById('leftScore').value = leftScore;
-                document.getElementById('rightScore').value = rightScore;
             }
-
-            document.getElementById(tabId).querySelector('img').src = "icons/close.png";
-            cellData[tabId].used = true;
-
-            if (leftScore <= 0) {
-                showGameOver('مبرووووووووك للفريق الأزرق 🔵!');
-                return;
-            } else if (rightScore <= 0) {
-                showGameOver('مبرووووووووك للفريق الأحمر 🔴!');
-                return;
-            }
-
-            if (skipTurns > 0) {
-                skipTurns--;
-            } else {
-                if (leftArrowVisible) {
-                    document.getElementById('leftArrow').style.display = 'none';
-                    document.getElementById('rightArrow').style.display = 'block';
-                    lastTeam = 'right';
-                } else {
-                    document.getElementById('rightArrow').style.display = 'none';
-                    document.getElementById('leftArrow').style.display = 'block';
-                    lastTeam = 'left';
-                }
-            }
-        }
 
         function resetCentralImage() {
             document.getElementById('pic00').src = "icons/tt.png";
