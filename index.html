@@ -11,8 +11,8 @@
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="لعبة طبول الحرب - تحدي الفرق الممتع">
     <meta property="og:description" content="انضم إلى لعبة طبول الحرب وتحدَّ فريقك في تجربة تفاعلية مليئة بالإثارة!">
-    <meta property="og:image" content="https://moiyen.github.io/moiyed/icons/tt.png">
-    <meta property="og:url" content="https://moiyen.github.io/moiyed/">
+    <meta property="og:image" content="https://moiyed.github.io/moiyed/icons/tt.png">
+    <meta property="og:url" content="https://moiyed.github.io/moiyed/">
     <meta property="og:type" content="website">
     <title>لعبة طبول الحرب</title>
     <link rel="shortcut icon" href="icons/sword.png">
@@ -190,6 +190,18 @@
             border-radius: 10px;
             z-index: 1001;
             display: none;
+        }
+        #playWinSoundButton {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #playWinSoundButton:hover {
+            background-color: #555;
         }
         @media (max-width: 768px) {
             #mainBoard td { 
@@ -419,7 +431,10 @@
     </table>
 
     <div id="confetti"></div>
-    <div id="gameOverMessage"></div>
+    <div id="gameOverMessage">
+        <div id="gameOverText"></div>
+        <button id="playWinSoundButton">تشغيل صوت الفوز</button>
+    </div>
 
     <center>
         <p><b><a href="#">جميع الحقوق محفوظة لعبة الحرب | طبول الحرب</a><br>
@@ -471,6 +486,10 @@
             { image: "points/30.png", points: 30, sound: "sounds/ابن سوريا تمثال من ذهب.mp3", type: "normal" },
             { image: "points/prison.png", points: 0, sound: "sounds/police-siren-for-loop.mp3", type: "prison" }
         ];
+
+        // تحميل الأصوات مسبقًا
+        const blueWinAudio = new Audio('sounds/blue_win.mp3');
+        const redWinAudio = new Audio('sounds/red_win.mp3');
 
         let cellData = {};
         let gameActive = true;
@@ -689,22 +708,36 @@
             }
 
             const gameOverMessage = document.getElementById('gameOverMessage');
-            gameOverMessage.textContent = message;
+            const gameOverText = document.getElementById('gameOverText');
+            gameOverText.textContent = message;
             gameOverMessage.style.display = 'block';
 
-            // تشغيل صوت الفوز بناءً على الفريق الفائز
-            let winSound;
-            if (message.includes('الفريق الأزرق')) {
-                winSound = 'sounds/بوظة.mp3';
-            } else if (message.includes('الفريق الأحمر')) {
-                winSound = 'sounds/بوظة.mp3';
-            }
+            // تشغيل صوت الفوز تلقائيًا مع تأخير بسيط
+            setTimeout(() => {
+                if (message.includes('الفريق الأزرق')) {
+                    blueWinAudio.currentTime = 0;
+                    blueWinAudio.play().catch((error) => console.log("خطأ في تشغيل صوت الفوز للفريق الأزرق:", error));
+                    currentAudio = blueWinAudio;
+                } else if (message.includes('الفريق الأحمر')) {
+                    redWinAudio.currentTime = 0;
+                    redWinAudio.play().catch((error) => console.log("خطأ في تشغيل صوت الفوز للفريق الأحمر:", error));
+                    currentAudio = redWinAudio;
+                }
+            }, 100);
 
-            if (winSound) {
-                const audio = new Audio(winSound);
-                audio.play().catch(() => console.log("خطأ في تشغيل صوت الفوز"));
-                currentAudio = audio;
-            }
+            // إعداد زر تشغيل الصوت يدويًا كخيار احتياطي
+            const playWinSoundButton = document.getElementById('playWinSoundButton');
+            playWinSoundButton.onclick = () => {
+                if (message.includes('الفريق الأزرق')) {
+                    blueWinAudio.currentTime = 0;
+                    blueWinAudio.play().catch((error) => console.log("خطأ في تشغيل صوت الفوز للفريق الأزرق:", error));
+                    currentAudio = blueWinAudio;
+                } else if (message.includes('الفريق الأحمر')) {
+                    redWinAudio.currentTime = 0;
+                    redWinAudio.play().catch((error) => console.log("خطأ في تشغيل صوت الفوز للفريق الأحمر:", error));
+                    currentAudio = redWinAudio;
+                }
+            };
         }
 
         function changeBackground() {
@@ -737,7 +770,7 @@
         }
     </script>
 
-    <!-- Cloudflare Challenge Script 1 -->
+    <!-- Cloudflare Challenge Scripts -->
     <script>
         (function(){
             function c(){
@@ -774,7 +807,6 @@
         })();
     </script>
 
-    <!-- Cloudflare Challenge Script 2 -->
     <script>
         (function(){
             function c(){
@@ -811,7 +843,6 @@
         })();
     </script>
 
-    <!-- Cloudflare Challenge Script 3 -->
     <script>
         (function(){
             function c(){
@@ -848,7 +879,6 @@
         })();
     </script>
 
-    <!-- Cloudflare Challenge Script 4 -->
     <script>
         (function(){
             function c(){
@@ -885,7 +915,6 @@
         })();
     </script>
 
-    <!-- Cloudflare Challenge Script 5 -->
     <script>
         (function(){
             function c(){
