@@ -194,14 +194,15 @@
         #playWinSoundButton {
             margin-top: 10px;
             padding: 5px 10px;
-            background-color: #333;
+            background-color: #4CAF50;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
         }
         #playWinSoundButton:hover {
-            background-color: #555;
+            background-color: #45a049;
         }
         @media (max-width: 768px) {
             #mainBoard td { 
@@ -433,7 +434,7 @@
     <div id="confetti"></div>
     <div id="gameOverMessage">
         <div id="gameOverText"></div>
-        <button id="playWinSoundButton">تشغيل صوت الفوز</button>
+        <button id="playWinSoundButton">🎉 استمع إلى صوت الفوز!</button>
     </div>
 
     <center>
@@ -649,10 +650,14 @@
             cellData[tabId].used = true;
         
             if (leftScore <= 0) {
-                showGameOver('مبرووووووووك للفريق الأزرق 🔵!');
+                setTimeout(() => {
+                    showGameOver('مبرووووووووك للفريق الأزرق 🔵!');
+                }, 500); // تأخير للسماح بتشغيل صوت الأيقونة الأخيرة
                 return;
             } else if (rightScore <= 0) {
-                showGameOver('مبرووووووووك للفريق الأحمر 🔴!');
+                setTimeout(() => {
+                    showGameOver('مبرووووووووك للفريق الأحمر 🔴!');
+                }, 500); // تأخير للسماح بتشغيل صوت الأيقونة الأخيرة
                 return;
             }
         
@@ -712,20 +717,7 @@
             gameOverText.textContent = message;
             gameOverMessage.style.display = 'block';
 
-            // تشغيل صوت الفوز تلقائيًا مع تأخير بسيط
-            setTimeout(() => {
-                if (message.includes('الفريق الأزرق')) {
-                    blueWinAudio.currentTime = 0;
-                    blueWinAudio.play().catch((error) => console.log("خطأ في تشغيل صوت الفوز للفريق الأزرق:", error));
-                    currentAudio = blueWinAudio;
-                } else if (message.includes('الفريق الأحمر')) {
-                    redWinAudio.currentTime = 0;
-                    redWinAudio.play().catch((error) => console.log("خطأ في تشغيل صوت الفوز للفريق الأحمر:", error));
-                    currentAudio = redWinAudio;
-                }
-            }, 100);
-
-            // إعداد زر تشغيل الصوت يدويًا كخيار احتياطي
+            // إعداد زر تشغيل الصوت يدويًا
             const playWinSoundButton = document.getElementById('playWinSoundButton');
             playWinSoundButton.onclick = () => {
                 if (message.includes('الفريق الأزرق')) {
