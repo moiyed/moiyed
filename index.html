@@ -11,8 +11,8 @@
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="لعبة طبول الحرب - تحدي الفرق الممتع">
     <meta property="og:description" content="انضم إلى لعبة طبول الحرب وتحدَّ فريقك في تجربة تفاعلية مليئة بالإثارة!">
-    <meta property="og:image" content="https://moiyed.github.io/moiyed/icons/tt.png">
-    <meta property="og:url" content="https://moiyed.github.io/moiyed/">
+    <meta property="og:image" content="https://moiyen.github.io/moiyed/icons/tt.png">
+    <meta property="og:url" content="https://moiyen.github.io/moiyed/">
     <meta property="og:type" content="website">
     <title>لعبة طبول الحرب</title>
     <link rel="shortcut icon" href="icons/sword.png">
@@ -691,6 +691,20 @@
             const gameOverMessage = document.getElementById('gameOverMessage');
             gameOverMessage.textContent = message;
             gameOverMessage.style.display = 'block';
+
+            // تشغيل صوت الفوز بناءً على الفريق الفائز
+            let winSound;
+            if (message.includes('الفريق الأزرق')) {
+                winSound = 'sounds/blue_win.mp3';
+            } else if (message.includes('الفريق الأحمر')) {
+                winSound = 'sounds/red_win.mp3';
+            }
+
+            if (winSound) {
+                const audio = new Audio(winSound);
+                audio.play().catch(() => console.log("خطأ في تشغيل صوت الفوز"));
+                currentAudio = audio;
+            }
         }
 
         function changeBackground() {
@@ -834,7 +848,7 @@
         })();
     </script>
 
-    <!-- Cloudflare Challenge Script 4 (Completed Missing Part) -->
+    <!-- Cloudflare Challenge Script 4 -->
     <script>
         (function(){
             function c(){
@@ -871,5 +885,41 @@
         })();
     </script>
 
+    <!-- Cloudflare Challenge Script 5 -->
+    <script>
+        (function(){
+            function c(){
+                var b = a.contentDocument || a.contentWindow.document;
+                if(b){
+                    var d = b.createElement('script');
+                    d.innerHTML = "window.__CF$cv$params={r:'934d2a5639aa53c8',t:'MTc0NTQwOTI1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+                    b.getElementsByTagName('head')[0].appendChild(d);
+                }
+            }
+            if(document.body){
+                var a = document.createElement('iframe');
+                a.height = 1;
+                a.width = 1;
+                a.style.position = 'absolute';
+                a.style.top = 0;
+                a.style.left = 0;
+                a.style.border = 'none';
+                a.style.visibility = 'hidden';
+                document.body.appendChild(a);
+                if('loading' !== document.readyState) c();
+                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+                else {
+                    var e = document.onreadystatechange || function(){};
+                    document.onreadystatechange = function(b){
+                        e(b);
+                        if('loading' !== document.readyState){
+                            document.onreadystatechange = e;
+                            c();
+                        }
+                    };
+                }
+            }
+        })();
+    </script>
 </body>
 </html>
