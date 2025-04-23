@@ -488,10 +488,6 @@
             { image: "points/prison.png", points: 0, sound: "sounds/police-siren-for-loop.mp3", type: "prison" }
         ];
 
-        // تحميل الأصوات مسبقًا
-        const blueWinAudio = new Audio('sounds/blue win.mp3');
-        const redWinAudio = new Audio('sounds/blue win.mp3');
-
         let cellData = {};
         let gameActive = true;
         let skipTurns = 0;
@@ -652,12 +648,12 @@
             if (leftScore <= 0) {
                 setTimeout(() => {
                     showGameOver('مبرووووووووك للفريق الأزرق 🔵!');
-                }, 500); // تأخير للسماح بتشغيل صوت الأيقونة الأخيرة
+                }, 2000); // تأخير للسماح بتشغيل صوت الأيقونة الأخيرة
                 return;
             } else if (rightScore <= 0) {
                 setTimeout(() => {
                     showGameOver('مبرووووووووك للفريق الأحمر 🔴!');
-                }, 500); // تأخير للسماح بتشغيل صوت الأيقونة الأخيرة
+                }, 2000); // تأخير للسماح بتشغيل صوت الأيقونة الأخيرة
                 return;
             }
         
@@ -698,7 +694,6 @@
 
         function showGameOver(message) {
             gameActive = false;
-            stopMusic();
             const confettiContainer = document.getElementById('confetti');
             confettiContainer.innerHTML = '';
             confettiContainer.style.display = 'block';
@@ -720,14 +715,18 @@
             // إعداد زر تشغيل الصوت يدويًا
             const playWinSoundButton = document.getElementById('playWinSoundButton');
             playWinSoundButton.onclick = () => {
+                // إيقاف أي صوت قيد التشغيل
+                stopMusic();
+                // إنشاء كائن Audio جديد لتجنب أي مشاكل مع السياق السابق
+                let winSound;
                 if (message.includes('الفريق الأزرق')) {
-                    blueWinAudio.currentTime = 0;
-                    blueWinAudio.play().catch((error) => console.log("خطأ في تشغيل صوت الفوز للفريق الأزرق:", error));
-                    currentAudio = blueWinAudio;
+                    winSound = new Audio('sounds/blue_win.mp3');
                 } else if (message.includes('الفريق الأحمر')) {
-                    redWinAudio.currentTime = 0;
-                    redWinAudio.play().catch((error) => console.log("خطأ في تشغيل صوت الفوز للفريق الأحمر:", error));
-                    currentAudio = redWinAudio;
+                    winSound = new Audio('sounds/red_win.mp3');
+                }
+                if (winSound) {
+                    winSound.play().catch((error) => console.log("خطأ في تشغيل صوت الفوز:", error));
+                    currentAudio = winSound;
                 }
             };
         }
