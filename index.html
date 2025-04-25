@@ -140,9 +140,9 @@
         }
         #resetButton, #stopMusicButton, #changeColorsButton {
             width: 120px;
-            height: 140px;
+            height: 40px;
             cursor: pointer;
-            margin: 15px;
+            margin: 10px;
             transition: filter 0.3s ease;
         }
         #resetButton:hover, #stopMusicButton:hover, #changeColorsButton:hover {
@@ -155,10 +155,17 @@
             color: #fff;
             border: none;
             cursor: pointer;
-            margin: 20px;
+            margin: 10px;
         }
         #backgroundSelect:hover {
             background-color: #555;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
         }
         #confetti {
             position: fixed;
@@ -400,22 +407,24 @@
                         </tr>
                     </tbody>
                 </table>
-                <img id="resetButton" src="icons/restart.png" onclick="resetGame()" alt="إعادة تعيين اللعبة">
-                <img id="stopMusicButton" src="icons/stop.png" onclick="stopMusic()" alt="إيقاف الموسيقى">
-                <img id="changeColorsButton" src="icons/change.png" onclick="toggleColorBox()" alt="تغيير الألوان">
-                <select id="backgroundSelect" onchange="changeBackground()">
-                    <option value="default">افتراضي (رمادي)</option>
-                    <option value="lake">بحيرة هادئة</option>
-                    <option value="rainy_window">نافذة ماطرة</option>
-                    <option value="night_balloon">منطاد ليلي</option>
-                    <option value="galaxy_sky">سماء المجرة</option>
-                    <option value="glowing_heart">قلب مضيء</option>
-                    <option value="mountain_sunset">غروب جبلي</option>
-                    <option value="vintage_map">خريطة عتيقة</option>
-                    <option value="foggy_forest">غابة ضبابية</option>
-                    <option value="foggy_mountains">جبال ضبابية</option>
-                    <option value="turquoise_sea">بحر فيروزي</option>
-                </select>
+                <div class="button-container">
+                    <img id="resetButton" src="icons/restart.png" onclick="resetGame()" alt="إعادة تعيين اللعبة">
+                    <img id="stopMusicButton" src="icons/stop.png" onclick="stopMusic()" alt="إيقاف الموسيقى">
+                    <img id="changeColorsButton" src="icons/change.png" onclick="toggleColorBox()" alt="تغيير الألوان">
+                    <select id="backgroundSelect" onchange="changeBackground()">
+                        <option value="default">افتراضي (رمادي)</option>
+                        <option value="lake">بحيرة هادئة</option>
+                        <option value="rainy_window">نافذة ماطرة</option>
+                        <option value="night_balloon">منطاد ليلي</option>
+                        <option value="galaxy_sky">سماء المجرة</option>
+                        <option value="glowing_heart">قلب مضيء</option>
+                        <option value="mountain_sunset">غروب جبلي</option>
+                        <option value="vintage_map">خريطة عتيقة</option>
+                        <option value="foggy_forest">غابة ضبابية</option>
+                        <option value="foggy_mountains">جبال ضبابية</option>
+                        <option value="turquoise_sea">بحر فيروزي</option>
+                    </select>
+                </div>
                 <div id="colorBox" class="color-box">
                     <img class="coloredCircle" alt="red" onclick="changeBoardColor('#FF0000', '#d1d1d1')" src="icons/redCircle.png">
                     <img class="coloredCircle" alt="blue" onclick="changeBoardColor('#00CED1', '#d1d1d1')" src="icons/trkwazCircle.png">
@@ -710,12 +719,9 @@
             gameOverText.textContent = message;
             gameOverMessage.style.display = 'block';
 
-            // إعداد زر تشغيل الصوت يدويًا
             const playWinSoundButton = document.getElementById('playWinSoundButton');
             playWinSoundButton.onclick = () => {
-                // إيقاف أي صوت قيد التشغيل
                 stopMusic();
-                // إنشاء كائن Audio جديد لتجنب أي مشاكل مع السياق السابق
                 let winSound;
                 if (message.includes('الفريق الأزرق')) {
                     winSound = new Audio('sounds/blue_win.mp3');
