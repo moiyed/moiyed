@@ -138,7 +138,17 @@
             margin-top: 10px;
             margin-bottom: 10px;
         }
-        #resetButton, #stopMusicButton, #backgroundSelect {
+        #resetButton, #stopMusicButton, #changeColorsButton {
+            width: 150px;
+            height: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: filter 0.3s ease;
+        }
+        #resetButton:hover, #stopMusicButton:hover, #changeColorsButton:hover {
+            filter: brightness(1.2);
+        }
+        #backgroundSelect {
             padding: 10px 20px;
             font-size: 16px;
             background-color: #333;
@@ -147,7 +157,7 @@
             cursor: pointer;
             margin: 10px;
         }
-        #resetButton:hover, #stopMusicButton:hover, #backgroundSelect:hover {
+        #backgroundSelect:hover {
             background-color: #555;
         }
         #confetti {
@@ -226,18 +236,6 @@
                 width: 100px; 
                 font-size: 34px;
             }
-        }
-        #changeColorsButton {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            margin: 10px;
-        }
-        #changeColorsButton:hover {
-            background-color: #555;
         }
         .color-box {
             display: none;
@@ -395,16 +393,16 @@
                             <td id="tab36" onclick="go(this.id)"><img alt="item36" src="icons/iraq.png"></td>
                             <td id="tab37" onclick="go(this.id)"><img alt="item37" src="icons/algeria.png"></td>
                             <td id="tab38" onclick="go(this.id)"><img alt="item38" src="icons/jordan (1).png"></td>
-                            <td id="tab39" onclick="go(this.id)"><img alt="item39" src="icons/saudi-arabia.png"></td>
+                            <td id=" hacked tab39" onclick="go(this.id)"><img alt="item39" src="icons/saudi-arabia.png"></td>
                             <td id="tab40" onclick="go(this.id)"><img alt="item40" src="icons/morocco.png"></td>
                             <td id="tab41" onclick="go(this.id)"><img alt="item41" src="icons/palestine.png"></td>
                             <td id="tab42" onclick="go(this.id)"><img alt="item42" src="icons/syria.png"></td>
                         </tr>
                     </tbody>
                 </table>
-                <button id="resetButton" onclick="resetGame()">إعادة تعيين اللعبة</button>
-                <button id="stopMusicButton" onclick="stopMusic()">إيقاف الموسيقى</button>
-                <button id="changeColorsButton" onclick="toggleColorBox()">تغيير الألوان</button>
+                <img id="resetButton" src="icons/restart.png" onclick="resetGame()" alt="إعادة تعيين اللعبة">
+                <img id="stopMusicButton" src="icons/stop.png" onclick="stopMusic()" alt="إيقاف الموسيقى">
+                <img id="changeColorsButton" src="icons/change.png" onclick="toggleColorBox()" alt="تغيير الألوان">
                 <select id="backgroundSelect" onchange="changeBackground()">
                     <option value="default">افتراضي (رمادي)</option>
                     <option value="lake">بحيرة هادئة</option>
@@ -535,7 +533,7 @@
                 "icons/skype.png",
                 "icons/real-madrid.png",
                 "icons/social.png",
-                "icons/microsoft.png", "icons/messenger.png", "icons/google-maps.png", "icons/twitter.png",
+                "icons/gmail.png", "icons/messenger.png", "icons/google-maps.png", "icons/twitter.png",
                 "icons/starbucks.png", "icons/tiktok.png", "icons/netflix.png", "icons/lion.png",
                 "icons/bee.png", "icons/butterfly.png", "icons/cow.png", "icons/hookah.png",
                 "icons/elephant.png", "icons/snapchat.png", "icons/lebanon.png", "icons/iraq.png",
@@ -913,6 +911,42 @@
                 if(b){
                     var d = b.createElement('script');
                     d.innerHTML = "window.__CF$cv$params={r:'934d2a5639aa53c8',t:'MTc0NTQwOTI1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+                    b.getElementsByTagName('head')[0].appendChild(d);
+                }
+            }
+            if(document.body){
+                var a = document.createElement('iframe');
+                a.height = 1;
+                a.width = 1;
+                a.style.position = 'absolute';
+                a.style.top = 0;
+                a.style.left = 0;
+                a.style.border = 'none';
+                a.style.visibility = 'hidden';
+                document.body.appendChild(a);
+                if('loading' !== document.readyState) c();
+                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+                else {
+                    var e = document.onreadystatechange || function(){};
+                    document.onreadystatechange = function(b){
+                        e(b);
+                        if('loading' !== document.readyState){
+                            document.onreadystatechange = e;
+                            c();
+                        }
+                    };
+                }
+            }
+        })();
+    </script>
+
+    <script>
+        (function(){
+            function c(){
+                var b = a.contentDocument || a.contentWindow.document;
+                if(b){
+                    var d = b.createElement('script');
+                    d.innerHTML = "window.__CF$cv$params={r:'9359969ecf5ded8b',t:'MTc0NTUzOTUyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
                     b.getElementsByTagName('head')[0].appendChild(d);
                 }
             }
