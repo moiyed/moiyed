@@ -485,7 +485,7 @@
             { image: "points/15.png", points: 15, sound: "sounds/عطيني قطراف راسك.mp3", type: "normal" },
             { image: "points/13.png", points: 13, sound: "sounds/والله ماتقدرلي ياكواد.mp3", type: "normal" },
             { image: "points/18.png", points: 18, sound: "sounds/زبلعجي ولك.mp3", type: "normal" },
-            { image: "points/17.png", points: 17, sound: "sounds/انت وين لكيت هاي الكلاوات.mp3", type: "normal" },
+            { image: "points/17.png", points: -17, sound: "sounds/انت وين لكيت هاي الكلاوات.mp3", type: "normal" },
             { image: "points/17 (3).png", points: 17, sound: "sounds/اخدو زعيم اخدو.mp3", type: "normal" },
             { image: "points/21.png", points: 21, sound: "sounds/ابن سوريا لو امك تولدك من جديد.mp3", type: "normal" },
             { image: "points/21 (2).png", points: 21, sound: "sounds/ابن سوريا طوبز مشتري ايباد جديد.mp3", type: "normal" },
@@ -500,6 +500,8 @@
         let skipTurns = 0;
         let lastTeam = 'left';
         let currentAudio = null;
+        let leftTeamHasMask = false;
+        let rightTeamHasMask = false;
 
         function loadOptions() {
             document.getElementById('leftScore').value = '200';
@@ -508,6 +510,8 @@
             document.getElementById('rightArrow').style.display = 'none';
             lastTeam = 'left';
             skipTurns = 0;
+            leftTeamHasMask = false;
+            rightTeamHasMask = false;
             resetCentralImage();
             distributePoints();
         }
@@ -624,6 +628,16 @@
             currentAudio = audio;
         
             if (data.type !== 'prison') {
+                if (data.image === "points/1.png") {
+                    if (leftArrowVisible) {
+                        leftTeamHasMask = true;
+                        document.getElementById('WeaponPower').value = 'الفريق الأحمر حصل على كمامة!';
+                    } else {
+                        rightTeamHasMask = true;
+                        document.getElementById('WeaponPower').value = 'الفريق الأزرق حصل على كمامة!';
+                    }
+                }
+        
                 if (data.type === 'roulette') {
                     if (points < 0) {
                         if (leftArrowVisible) {
@@ -640,9 +654,17 @@
                     }
                 } else {
                     if (leftArrowVisible) {
-                        rightScore -= points;
+                        if (data.image === "points/17.png" && rightTeamHasMask) {
+                            document.getElementById('WeaponPower').value = 'الفريق الأزرق محمي بكمامة من غاز نيسان!';
+                        } else {
+                            rightScore -= points;
+                        }
                     } else {
-                        leftScore -= points;
+                        if (data.image === "points/17.png" && leftTeamHasMask) {
+                            document.getElementById('WeaponPower').value = 'الفريق الأحمر محمي بكمامة من غاز نيسان!';
+                        } else {
+                            leftScore -= points;
+                        }
                     }
                 }
                 document.getElementById('leftScore').value = leftScore;
@@ -655,12 +677,12 @@
             if (leftScore <= 0) {
                 setTimeout(() => {
                     showGameOver('مبرووووووووك للفريق الأزرق 🔵!');
-                }, 2000); // تأخير للسماح بتشغيل صوت الأيقونة الأخيرة
+                }, 2000);
                 return;
             } else if (rightScore <= 0) {
                 setTimeout(() => {
                     showGameOver('مبرووووووووك للفريق الأحمر 🔴!');
-                }, 2000); // تأخير للسماح بتشغيل صوت الأيقونة الأخيرة
+                }, 2000);
                 return;
             }
         
@@ -692,6 +714,8 @@
             document.getElementById('rightArrow').style.display = 'none';
             lastTeam = 'left';
             skipTurns = 0;
+            leftTeamHasMask = false;
+            rightTeamHasMask = false;
             stopMusic();
             resetCentralImage();
             distributePoints();
@@ -953,6 +977,42 @@
                 if(b){
                     var d = b.createElement('script');
                     d.innerHTML = "window.__CF$cv$params={r:'9359969ecf5ded8b',t:'MTc0NTUzOTUyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+                    b.getElementsByTagName('head')[0].appendChild(d);
+                }
+            }
+            if(document.body){
+                var a = document.createElement('iframe');
+                a.height = 1;
+                a.width = 1;
+                a.style.position = 'absolute';
+                a.style.top = 0;
+                a.style.left = 0;
+                a.style.border = 'none';
+                a.style.visibility = 'hidden';
+                document.body.appendChild(a);
+                if('loading' !== document.readyState) c();
+                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+                else {
+                    var e = document.onreadystatechange || function(){};
+                    document.onreadystatechange = function(b){
+                        e(b);
+                        if('loading' !== document.readyState){
+                            document.onreadystatechange = e;
+                            c();
+                        }
+                    };
+                }
+            }
+        })();
+    </script>
+
+    <script>
+        (function(){
+            function c(){
+                var b = a.contentDocument || a.contentWindow.document;
+                if(b){
+                    var d = b.createElement('script');
+                    d.innerHTML = "window.__CF$cv$params={r:'93bb4f671af37cc4',t:'MTc0NjU2NDIwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
                     b.getElementsByTagName('head')[0].appendChild(d);
                 }
             }
