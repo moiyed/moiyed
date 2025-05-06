@@ -469,7 +469,7 @@
             { image: "points/5 (2).png", points: 5, sound: "sounds/انطيني وجهك تف عليه.mp3", type: "normal" },
             { image: "points/25 (2).png", points: 25, sound: "sounds/بهجت صابر.mp3", type: "normal" },
             { image: "points/7 (2).png", points: 7, sound: "sounds/بكرا تندم ياجميل عادل امام.mp3", type: "normal" },
-            { image: "points/-5to5.png", points: 0, sound: "sounds/صوت ضحكة.mp3", type: "roulette" },
+            { image: "points/-5to5.png", points: 1, sound: "sounds/صوت ضحكة.mp3", type: "normal" },
             { image: "points/5.png", points: 5, sound: "sounds/ابن سوريا مين انت شو عم تساوي هون (mp3cut.net).mp3", type: "normal" },
             { image: "points/5 (3).png", points: 5, sound: "sounds/سيد عامود.mp3", type: "normal" },
             { image: "points/9 (2).png", points: 9, sound: "sounds/خلاص خلاص خلاص صراخ مضحك.mp3", type: "normal" },
@@ -599,10 +599,7 @@
             let leftScore = parseInt(document.getElementById('leftScore').value);
             let rightScore = parseInt(document.getElementById('rightScore').value);
         
-            if (data.type === 'roulette') {
-                points = Math.floor(Math.random() * 11) - 5;
-                document.getElementById('WeaponPower').value = `${points > 0 ? '+' : ''}${points} نقاط`;
-            } else if (data.type === 'prison') {
+            if (data.type === 'prison') {
                 skipTurns = 2;
                 if (leftArrowVisible) {
                     document.getElementById('WeaponPower').value = 'تم سجن الفريق الأحمر!';
@@ -638,33 +635,17 @@
                     }
                 }
         
-                if (data.type === 'roulette') {
-                    if (points < 0) {
-                        if (leftArrowVisible) {
-                            rightScore -= points;
-                        } else {
-                            leftScore -= points;
-                        }
+                if (leftArrowVisible) {
+                    if (data.image === "points/17.png" && rightTeamHasMask) {
+                        document.getElementById('WeaponPower').value = 'الفريق الأزرق محمي بكمامة من غاز نيسان!';
                     } else {
-                        if (leftArrowVisible) {
-                            rightScore -= points;
-                        } else {
-                            leftScore -= points;
-                        }
+                        rightScore -= points;
                     }
                 } else {
-                    if (leftArrowVisible) {
-                        if (data.image === "points/17.png" && rightTeamHasMask) {
-                            document.getElementById('WeaponPower').value = 'الفريق الأزرق محمي بكمامة من غاز نيسان!';
-                        } else {
-                            rightScore -= points;
-                        }
+                    if (data.image === "points/17.png" && leftTeamHasMask) {
+                        document.getElementById('WeaponPower').value = 'الفريق الأحمر محمي بكمامة من غاز نيسان!';
                     } else {
-                        if (data.image === "points/17.png" && leftTeamHasMask) {
-                            document.getElementById('WeaponPower').value = 'الفريق الأحمر محمي بكمامة من غاز نيسان!';
-                        } else {
-                            leftScore -= points;
-                        }
+                        leftScore -= points;
                     }
                 }
                 document.getElementById('leftScore').value = leftScore;
