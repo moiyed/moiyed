@@ -234,6 +234,18 @@
             display: none;
             font-size: 18px;
         }
+        #teamSelection {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 2px solid #333;
+            border-radius: 5px;
+            text-align: center;
+        }
+        #teamSelection.hidden {
+            display: none;
+        }
         @media (max-width: 768px) {
             #mainBoard td { 
                 width: 50px;
@@ -319,7 +331,7 @@
         }
     </style>
 </head>
-<body onload="loadOptions()">
+<body onload="showTeamSelection()">
     <div class="logo" style="margin-top: 10px;">
         <a href="#"><img src="icons/logo.png" alt="شعار اللعبة"></a>
     </div>
@@ -329,12 +341,18 @@
         <span style="font-weight: bold; background: linear-gradient(to right, black 100%, silver 0%); -webkit-background-clip: text; color: transparent;">Moiyed Al Aiyeed</span>
     </div>
 
+    <div id="teamSelection">
+        <h3>اختر الفريق الذي يبدأ:</h3>
+        <button onclick="startGame('left')">الفريق الأحمر</button>
+        <button onclick="startGame('right')">الفريق الأزرق</button>
+    </div>
+
     <table border="0" cellpadding="0" cellspacing="0" width="100%">
         <tr>
             <th>
                 <div class="teams-wrapper">
                     <div class="team-container">
-                        <img src="icons/arrow.png" id="leftArrow" class="arrow" style="display: block;">
+                        <img src="icons/arrow.png" id="leftArrow" class="arrow" style="display: none;">
                         <div class="team-inputs">
                             <input value="200" class="score red" id="leftScore" size="20" type="text" readonly>
                             <input value="الشّمال" class="teamName red" id="leftTeam" size="20" type="text">
@@ -438,6 +456,7 @@
                         <option value="turquoise_sea">بحر فيروزي</option>
                     </select>
                 </div>
+                <div style="text-align: center; margin: 10px 0;">لتوقيف/تشغيل الأصوات نهائياً</div>
                 <div class="button-container">
                     <img id="toggleSoundButton" src="icons/switch-on.png" onclick="toggleSound()" alt="تشغيل/إيقاف الأصوات">
                 </div>
@@ -513,20 +532,35 @@
         ];
 
         let cellData = {};
-        let gameActive = true;
+        let gameActive = false;
         let skipTurns = 0;
-        let lastTeam = 'left';
+        let lastTeam = '';
         let currentAudio = null;
         let leftTeamHasMask = false;
         let rightTeamHasMask = false;
         let soundsEnabled = true;
 
+        function showTeamSelection() {
+            document.getElementById('teamSelection').classList.remove('hidden');
+        }
+
+        function startGame(startTeam) {
+            gameActive = true;
+            lastTeam = startTeam;
+            document.getElementById('teamSelection').classList.add('hidden');
+            if (startTeam === 'left') {
+                document.getElementById('leftArrow').style.display = 'block';
+                document.getElementById('rightArrow').style.display = 'none';
+            } else {
+                document.getElementById('rightArrow').style.display = 'block';
+                document.getElementById('leftArrow').style.display = 'none';
+            }
+            loadOptions();
+        }
+
         function loadOptions() {
             document.getElementById('leftScore').value = '200';
             document.getElementById('rightScore').value = '200';
-            document.getElementById('leftArrow').style.display = 'block';
-            document.getElementById('rightArrow').style.display = 'none';
-            lastTeam = 'left';
             skipTurns = 0;
             leftTeamHasMask = false;
             rightTeamHasMask = false;
@@ -696,12 +730,12 @@
         
             if (leftScore <= -1) {
                 setTimeout(() => {
-                    showGameOver('مبرووووووووك للفريق الأزرق 🔵!');
+                    showGameOver('left');
                 }, 2000);
                 return;
             } else if (rightScore <= -1) {
                 setTimeout(() => {
-                    showGameOver('مبرووووووووك للفريق الأحمر 🔴!');
+                    showGameOver('right');
                 }, 2000);
                 return;
             }
@@ -727,12 +761,13 @@
         }
 
         function resetGame() {
-            gameActive = true;
+            gameActive = false;
+            showTeamSelection();
             document.getElementById('leftScore').value = '200';
             document.getElementById('rightScore').value = '200';
-            document.getElementById('leftArrow').style.display = 'block';
+            document.getElementById('leftArrow').style.display = 'none';
             document.getElementById('rightArrow').style.display = 'none';
-            lastTeam = 'left';
+            lastTeam = '';
             skipTurns = 0;
             leftTeamHasMask = false;
             rightTeamHasMask = false;
@@ -745,7 +780,7 @@
             document.getElementById('gameOverMessage').style.display = 'none';
         }
 
-        function showGameOver(message) {
+        function showGameOver(winningTeam) {
             gameActive = false;
             const confettiContainer = document.getElementById('confetti');
             confettiContainer.innerHTML = '';
@@ -762,19 +797,15 @@
 
             const gameOverMessage = document.getElementById('gameOverMessage');
             const gameOverText = document.getElementById('gameOverText');
-            gameOverText.textContent = message;
+            const teamName = document.getElementById(winningTeam === 'left' ? 'leftTeam' : 'rightTeam').value;
+            gameOverText.textContent = `مبروك لفريق ${teamName} ${winningTeam === 'left' ? '🔴' : '🔵'}!`;
             gameOverMessage.style.display = 'block';
 
             const playWinSoundButton = document.getElementById('playWinSoundButton');
             playWinSoundButton.onclick = () => {
                 if (soundsEnabled) {
                     stopMusic();
-                    let winSound;
-                    if (message.includes('الفريق الأزرق')) {
-                        winSound = new Audio('sounds/blue_win.mp3');
-                    } else if (message.includes('الفريق الأحمر')) {
-                        winSound = new Audio('sounds/red_win.mp3');
-                    }
+                    let winSound = new Audio(winningTeam === 'left' ? 'sounds/red_win.mp3' : 'sounds/blue_win.mp3');
                     if (winSound) {
                         winSound.play().catch((error) => console.log("خطأ في تشغيل صوت الفوز:", error));
                         currentAudio = winSound;
