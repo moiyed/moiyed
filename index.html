@@ -547,7 +547,7 @@
                         <img id="nextButton" src="music_button/next-track.png" onclick="playNextSong()" alt="التالي">
                     </div>
                     <div id="volumeControl">
-                        <input type="range" id="volumeSlider" min="0" max="100" value="50" oninput="adjustVolume(this.value)">
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50" oninput="adjustVolume()">
                         <span id="volumePercentage">50%</span>
                     </div>
                 </div>
@@ -627,10 +627,8 @@
         let currentSongIndex = -1;
         let isPlaying = false;
         let songs = [
-            "music/song1.mp3",
-            "music/song2.mp3",
-            "music/song3.mp3"
-            // Add more songs as needed; this is a placeholder list
+            "music/song1.mp3"
+            // يمكنك إضافة المزيد من الأغاني إذا أضفتها إلى المجلد
         ];
 
         function showTeamSelection() {
@@ -665,24 +663,19 @@
         }
 
         function initializeMusicPlayer() {
-            // Simulate fetching songs from the music folder
-            // In a real scenario, you might need a server-side script to list files
-            // For now, we use a placeholder list; the logic will work with any .mp3 files in the folder
             backgroundAudio = new Audio();
-            backgroundAudio.volume = 0.5; // Initial volume
-            document.getElementById('volumeSlider').value = 50;
-            document.getElementById('volumePercentage').textContent = '50%';
+            backgroundAudio.volume = document.getElementById('volumeSlider').value / 100; // Set initial volume from slider
+            document.getElementById('volumePercentage').textContent = `${document.getElementById('volumeSlider').value}%`;
             backgroundAudio.addEventListener('ended', playNextSong);
         }
 
         function togglePlayPause() {
             if (!isPlaying) {
                 if (currentSongIndex === -1) {
-                    // Play a random song if none is selected
                     currentSongIndex = Math.floor(Math.random() * songs.length);
                 }
                 backgroundAudio.src = songs[currentSongIndex];
-                backgroundAudio.play().catch(() => console.log("خطأ في تشغيل الموسيقى"));
+                backgroundAudio.play().catch(() => console.log("خطأ في تشغيل الموسيقى: تأكد من تشغيل الصفحة عبر خادوم محلي مثل Live Server"));
                 isPlaying = true;
                 document.getElementById('playButton').src = 'music_button/pause-button.png';
                 updateSongTitle();
@@ -706,7 +699,7 @@
         function playNextSong() {
             currentSongIndex = (currentSongIndex + 1) % songs.length;
             backgroundAudio.src = songs[currentSongIndex];
-            backgroundAudio.play().catch(() => console.log("خطأ في تشغيل الموسيقى"));
+            backgroundAudio.play().catch(() => console.log("خطأ في تشغيل الموسيقى: تأكد من تشغيل الصفحة عبر خادوم محلي مثل Live Server"));
             isPlaying = true;
             document.getElementById('playButton').src = 'music_button/pause-button.png';
             updateSongTitle();
@@ -715,15 +708,17 @@
         function playPreviousSong() {
             currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
             backgroundAudio.src = songs[currentSongIndex];
-            backgroundAudio.play().catch(() => console.log("خطأ في تشغيل الموسيقى"));
+            backgroundAudio.play().catch(() => console.log("خطأ في تشغيل الموسيقى: تأكد من تشغيل الصفحة عبر خادوم محلي مثل Live Server"));
             isPlaying = true;
             document.getElementById('playButton').src = 'music_button/pause-button.png';
             updateSongTitle();
         }
 
-        function adjustVolume(value) {
-            backgroundAudio.volume = value / 100;
-            document.getElementById('volumePercentage').textContent = `${value}%`;
+        function adjustVolume() {
+            const slider = document.getElementById('volumeSlider');
+            const volume = slider.value;
+            backgroundAudio.volume = volume / 100;
+            document.getElementById('volumePercentage').textContent = `${volume}%`;
         }
 
         function updateSongTitle() {
