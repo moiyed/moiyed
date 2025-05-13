@@ -976,17 +976,17 @@
             confettiContainer.style.display = 'block';
 
             // إضافة القصاصات الورقية
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 800; i++) {
                 const piece = document.createElement('div');
                 piece.className = 'confetti-piece';
-                piece.style.left = Math.random() * 100 + 'vw';
-                piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                piece.style.left = Math.random() * 500 + 'vw';
+                piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 80%)`;
                 piece.style.animationDelay = Math.random() * 3 + 's';
                 confettiContainer.appendChild(piece);
             }
 
             // إضافة الألعاب النارية
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 800; i++) {
                 const firework = document.createElement('div');
                 firework.className = 'firework';
                 firework.style.left = Math.random() * 100 + 'vw';
@@ -1000,11 +1000,11 @@
                     const explosion = document.createElement('div');
                     explosion.className = 'firework-explosion';
                     explosion.style.left = firework.style.left;
-                    explosion.style.top = '50vh';
+                    explosion.style.top = '90vh';
                     confettiContainer.appendChild(explosion);
 
                     // إضافة جزيئات الانفجار
-                    for (let j = 0; j < 20; j++) {
+                    for (let j = 0; j < 50; j++) {
                         const particle = document.createElement('div');
                         particle.className = 'firework-particle';
                         particle.style.left = firework.style.left;
@@ -1016,8 +1016,8 @@
                         confettiContainer.appendChild(particle);
                     }
 
-                    setTimeout(() => explosion.remove(), 500);
-                }, 1000 + parseFloat(firework.style.animationDelay) * 1000);
+                    setTimeout(() => explosion.remove(), 1000);
+                }, 5000 + parseFloat(firework.style.animationDelay) * 5000);
             }
 
             const gameOverMessage = document.getElementById('gameOverMessage');
