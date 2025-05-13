@@ -41,6 +41,7 @@
         #mainBoard {
             border: 2px solid #333;
             background-color: #d1d1d1;
+            position: relative;
         }
         #mainBoard td {
             width: 75px;
@@ -329,6 +330,72 @@
             justify-content: center;
             gap: 5px;
         }
+        /* Music Player Styles */
+        #musicPlayer {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+        #musicPlayer img {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        #musicPlayer img:hover {
+            transform: scale(1.1);
+        }
+        #volumeControl {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #volumeSlider {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 8px;
+            background: #000;
+            border-radius: 5px;
+            outline: none;
+        }
+        #volumeSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #ff0000;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #volumeSlider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #ff0000;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #volumePercentage {
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        #songTitle {
+            color: #fff;
+            font-size: 14px;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body onload="showTeamSelection()">
@@ -469,6 +536,21 @@
                     <img class="coloredCircle" alt="palBlue" onclick="changeBoardColor('#87CEEB', '#c2bbba')" src="icons/palBlueCircle.png">
                     <img class="coloredCircle" alt="pink" onclick="changeBoardColor('#FF69B4', '#33222a')" src="icons/pinkCircle.png">
                 </div>
+
+                <!-- Music Player -->
+                <div id="musicPlayer">
+                    <div id="songTitle">لا توجد أغنية</div>
+                    <div style="display: flex; gap: 5px;">
+                        <img id="previousButton" src="music_button/previous-track.png" onclick="playPreviousSong()" alt="السابق">
+                        <img id="playButton" src="music_button/play-button.png" onclick="togglePlayPause()" alt="تشغيل">
+                        <img id="stopButton" src="music_button/stop-button.png" onclick="stopBackgroundMusic()" alt="إيقاف">
+                        <img id="nextButton" src="music_button/next-track.png" onclick="playNextSong()" alt="التالي">
+                    </div>
+                    <div id="volumeControl">
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50" oninput="adjustVolume(this.value)">
+                        <span id="volumePercentage">50%</span>
+                    </div>
+                </div>
             </th>
         </tr>
     </table>
@@ -540,6 +622,17 @@
         let rightTeamHasMask = false;
         let soundsEnabled = true;
 
+        // Music Player Variables
+        let backgroundAudio = null;
+        let currentSongIndex = -1;
+        let isPlaying = false;
+        let songs = [
+            "music/song1.mp3",
+            "music/song2.mp3",
+            "music/song3.mp3"
+            // Add more songs as needed; this is a placeholder list
+        ];
+
         function showTeamSelection() {
             document.getElementById('teamSelection').classList.remove('hidden');
         }
@@ -568,6 +661,74 @@
             document.getElementById('toggleSoundButton').src = 'icons/switch-on.png';
             resetCentralImage();
             distributePoints();
+            initializeMusicPlayer();
+        }
+
+        function initializeMusicPlayer() {
+            // Simulate fetching songs from the music folder
+            // In a real scenario, you might need a server-side script to list files
+            // For now, we use a placeholder list; the logic will work with any .mp3 files in the folder
+            backgroundAudio = new Audio();
+            backgroundAudio.volume = 0.5; // Initial volume
+            document.getElementById('volumeSlider').value = 50;
+            document.getElementById('volumePercentage').textContent = '50%';
+            backgroundAudio.addEventListener('ended', playNextSong);
+        }
+
+        function togglePlayPause() {
+            if (!isPlaying) {
+                if (currentSongIndex === -1) {
+                    // Play a random song if none is selected
+                    currentSongIndex = Math.floor(Math.random() * songs.length);
+                }
+                backgroundAudio.src = songs[currentSongIndex];
+                backgroundAudio.play().catch(() => console.log("خطأ في تشغيل الموسيقى"));
+                isPlaying = true;
+                document.getElementById('playButton').src = 'music_button/pause-button.png';
+                updateSongTitle();
+            } else {
+                backgroundAudio.pause();
+                isPlaying = false;
+                document.getElementById('playButton').src = 'music_button/play-button.png';
+            }
+        }
+
+        function stopBackgroundMusic() {
+            if (backgroundAudio) {
+                backgroundAudio.pause();
+                backgroundAudio.currentTime = 0;
+                isPlaying = false;
+                document.getElementById('playButton').src = 'music_button/play-button.png';
+                document.getElementById('songTitle').textContent = 'لا توجد أغنية';
+            }
+        }
+
+        function playNextSong() {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            backgroundAudio.src = songs[currentSongIndex];
+            backgroundAudio.play().catch(() => console.log("خطأ في تشغيل الموسيقى"));
+            isPlaying = true;
+            document.getElementById('playButton').src = 'music_button/pause-button.png';
+            updateSongTitle();
+        }
+
+        function playPreviousSong() {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            backgroundAudio.src = songs[currentSongIndex];
+            backgroundAudio.play().catch(() => console.log("خطأ في تشغيل الموسيقى"));
+            isPlaying = true;
+            document.getElementById('playButton').src = 'music_button/pause-button.png';
+            updateSongTitle();
+        }
+
+        function adjustVolume(value) {
+            backgroundAudio.volume = value / 100;
+            document.getElementById('volumePercentage').textContent = `${value}%`;
+        }
+
+        function updateSongTitle() {
+            const songName = songs[currentSongIndex].split('/').pop().replace('.mp3', '');
+            document.getElementById('songTitle').textContent = songName;
         }
 
         function distributePoints() {
@@ -774,6 +935,7 @@
             soundsEnabled = true;
             document.getElementById('toggleSoundButton').src = 'icons/switch-on.png';
             stopMusic();
+            stopBackgroundMusic();
             resetCentralImage();
             distributePoints();
             document.getElementById('confetti').style.display = 'none';
