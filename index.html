@@ -241,6 +241,61 @@
                 opacity: 0;
             }
         }
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: firework-launch 1s ease-in forwards;
+        }
+        @keyframes firework-launch {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50vh);
+                opacity: 0;
+            }
+        }
+        .firework-explosion {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            animation: firework-explode 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes firework-explode {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+        .firework-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: firework-particle 1s ease-out forwards;
+        }
+        @keyframes firework-particle {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(calc(50px * var(--dx)), calc(50px * var(--dy)));
+                opacity: 0;
+            }
+        }
         #gameOverMessage {
             position: fixed;
             top: 50%;
@@ -920,13 +975,49 @@
             confettiContainer.innerHTML = '';
             confettiContainer.style.display = 'block';
 
-            for (let i = 0; i < 500; i++) {
+            // إضافة القصاصات الورقية
+            for (let i = 0; i < 100; i++) {
                 const piece = document.createElement('div');
                 piece.className = 'confetti-piece';
                 piece.style.left = Math.random() * 100 + 'vw';
                 piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
                 piece.style.animationDelay = Math.random() * 3 + 's';
                 confettiContainer.appendChild(piece);
+            }
+
+            // إضافة الألعاب النارية
+            for (let i = 0; i < 10; i++) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.left = Math.random() * 100 + 'vw';
+                firework.style.top = '100vh';
+                firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                firework.style.animationDelay = Math.random() * 2 + 's';
+                confettiContainer.appendChild(firework);
+
+                // إضافة انفجار الألعاب النارية
+                setTimeout(() => {
+                    const explosion = document.createElement('div');
+                    explosion.className = 'firework-explosion';
+                    explosion.style.left = firework.style.left;
+                    explosion.style.top = '50vh';
+                    confettiContainer.appendChild(explosion);
+
+                    // إضافة جزيئات الانفجار
+                    for (let j = 0; j < 20; j++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'firework-particle';
+                        particle.style.left = firework.style.left;
+                        particle.style.top = '50vh';
+                        particle.style.backgroundColor = firework.style.backgroundColor;
+                        const angle = Math.random() * 2 * Math.PI;
+                        particle.style.setProperty('--dx', Math.cos(angle));
+                        particle.style.setProperty('--dy', Math.sin(angle));
+                        confettiContainer.appendChild(particle);
+                    }
+
+                    setTimeout(() => explosion.remove(), 500);
+                }, 1000 + parseFloat(firework.style.animationDelay) * 1000);
             }
 
             const gameOverMessage = document.getElementById('gameOverMessage');
@@ -1002,9 +1093,9 @@ function triggerNukeEffect() {
         smoke.className = 'smoke';
         smoke.style.left = Math.random() * 100 + 'vw';
         smoke.style.top = Math.random() * 100 + 'vh';
-        smoke.style.width = Math.random() * 500 + 200 + 'px'; // زيادة الحجم العشوائي للدخان
-        smoke.style.height = Math.random() * 500 + 200 + 'px';
-        smoke.style.background = `radial-gradient(circle, rgba(128, 128, 128, ${Math.random() * 0.9 + 0.6}) 0%, rgba(0, 0, 0, 0) 90%)`; // زيادة كثافة الدخان
+        smoke.style.width = Math.random() * 150 + 50 + 'px'; // زيادة الحجم العشوائي للدخان
+        smoke.style.height = Math.random() * 150 + 50 + 'px';
+        smoke.style.background = `radial-gradient(circle, rgba(128, 128, 128, ${Math.random() * 0.5 + 0.3}) 0%, rgba(0, 0, 0, 0) 70%)`; // زيادة كثافة الدخان
         smoke.style.animationDelay = Math.random() * 2 + 's';
         nukeEffect.appendChild(smoke);
         setTimeout(() => smoke.remove(), 4000); // زيادة مدة بقاء الدخان
@@ -1037,7 +1128,7 @@ function triggerNukeEffect() {
         for (let score of scores) score.classList.remove('shake');
         for (let name of teamNames) name.classList.remove('shake');
         for (let arrow of arrows) arrow.classList.remove('shake');
-    }, 7000);
+    }, 5000);
 
     // إخفاء العنصر تمامًا بعد انتهاء التلاشي التدريجي (7 ثوانٍ)
     setTimeout(() => {
@@ -1046,8 +1137,8 @@ function triggerNukeEffect() {
             nukeEffect.style.display = 'none';
             nukeEffect.innerHTML = '';
             nukeEffect.style.opacity = '1'; // استعادة العرض التدريجي للخلفية الأصلية
-        }, 3000); // مدة إضافية 2 ثانية للعودة التدريجية
-    }, 8000);
+        }, 2000); // مدة إضافية 2 ثانية للعودة التدريجية
+    }, 7000);
 }
     </script>
 </body>
