@@ -1002,9 +1002,9 @@ function triggerNukeEffect() {
         smoke.className = 'smoke';
         smoke.style.left = Math.random() * 100 + 'vw';
         smoke.style.top = Math.random() * 100 + 'vh';
-        smoke.style.width = Math.random() * 150 + 50 + 'px'; // زيادة الحجم العشوائي للدخان
-        smoke.style.height = Math.random() * 150 + 50 + 'px';
-        smoke.style.background = `radial-gradient(circle, rgba(128, 128, 128, ${Math.random() * 0.5 + 0.3}) 0%, rgba(0, 0, 0, 0) 70%)`; // زيادة كثافة الدخان
+        smoke.style.width = Math.random() * 500 + 200 + 'px'; // زيادة الحجم العشوائي للدخان
+        smoke.style.height = Math.random() * 500 + 200 + 'px';
+        smoke.style.background = `radial-gradient(circle, rgba(128, 128, 128, ${Math.random() * 0.9 + 0.6}) 0%, rgba(0, 0, 0, 0) 90%)`; // زيادة كثافة الدخان
         smoke.style.animationDelay = Math.random() * 2 + 's';
         nukeEffect.appendChild(smoke);
         setTimeout(() => smoke.remove(), 4000); // زيادة مدة بقاء الدخان
@@ -1037,7 +1037,7 @@ function triggerNukeEffect() {
         for (let score of scores) score.classList.remove('shake');
         for (let name of teamNames) name.classList.remove('shake');
         for (let arrow of arrows) arrow.classList.remove('shake');
-    }, 5000);
+    }, 7000);
 
     // إخفاء العنصر تمامًا بعد انتهاء التلاشي التدريجي (7 ثوانٍ)
     setTimeout(() => {
@@ -1046,8 +1046,8 @@ function triggerNukeEffect() {
             nukeEffect.style.display = 'none';
             nukeEffect.innerHTML = '';
             nukeEffect.style.opacity = '1'; // استعادة العرض التدريجي للخلفية الأصلية
-        }, 2000); // مدة إضافية 2 ثانية للعودة التدريجية
-    }, 7000);
+        }, 3000); // مدة إضافية 2 ثانية للعودة التدريجية
+    }, 8000);
 }
     </script>
 </body>
