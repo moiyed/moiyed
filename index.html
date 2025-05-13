@@ -19,14 +19,25 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #E8ECEF; /* تغيير لون الخلفية الافتراضية إلى أبيض غامق */
             background-attachment: fixed;
-            transition: opacity ease-in 0.2s;
+            transition: background-image 0.5s ease, background-color 0.5s ease;
             text-align: center;
             margin: 0;
             padding: 20px;
             position: relative;
             overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            filter: blur(5px) brightness(0.8);
+            z-index: -1;
         }
         body[unresolved] {
             opacity: 0;
@@ -34,29 +45,49 @@
             overflow: hidden;
             position: relative;
         }
-        table {
-            margin: 0 auto;
-            border-collapse: collapse;
-        }
         #mainBoard {
             border: 2px solid #333;
             background-color: #d1d1d1;
+            position: relative;
+            transition: background-color 0.5s ease;
+            z-index: 1;
+        }
+        #mainBoard.shake {
+            animation: shake 0.3s ease-in-out infinite;
+        }
+        @keyframes shake {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-3px, 3px); }
+            50% { transform: translate(3px, -3px); }
+            75% { transform: translate(-3px, -3px); }
+            100% { transform: translate(0, 0); }
         }
         #mainBoard td {
             width: 75px;
             height: 60px;
             text-align: center;
             cursor: pointer;
+            transition: transform 0.1s ease;
+            z-index: 1;
+        }
+        #mainBoard td.shake {
+            animation: shake 0.3s ease-in-out infinite;
         }
         #mainBoard img {
             width: 50px;
             height: 50px;
+            transition: transform 0.1s ease;
+            z-index: 1;
+        }
+        #mainBoard img.shake {
+            animation: shake 0.3s ease-in-out infinite;
         }
         #centralTd {
             background-color: #211a0542;
             width: 480px;
             height: 400px;
             position: relative;
+            z-index: 1;
         }
         #centralTd #imageDiv {
             position: relative;
@@ -86,6 +117,11 @@
             text-align: center;
             border: 3px solid #ccc;
             font-size: 36px;
+            transition: transform 0.1s ease;
+            z-index: 1;
+        }
+        .score.shake, .teamName.shake {
+            animation: shake 0.3s ease-in-out infinite;
         }
         .coloredCircle {
             width: 30px;
@@ -93,12 +129,14 @@
             margin: 5px;
             cursor: pointer;
             display: inline-block;
+            z-index: 1;
         }
         .popup {
             position: relative;
             display: inline-block;
             cursor: pointer;
             user-select: none;
+            z-index: 1;
         }
         .popup .popuptext {
             visibility: hidden;
@@ -138,12 +176,17 @@
             margin-top: 10px;
             margin-bottom: 10px;
         }
+        .logo img {
+            width: 300px;
+            height: auto;
+        }
         #resetButton, #stopMusicButton, #changeColorsButton, #toggleSoundButton {
             width: 120px;
             height: 60px;
             cursor: pointer;
             margin: 10px;
             transition: filter 0.3s ease;
+            z-index: 1;
         }
         #resetButton:hover, #stopMusicButton:hover, #changeColorsButton:hover, #toggleSoundButton:hover {
             filter: brightness(1.2);
@@ -156,6 +199,8 @@
             border: none;
             cursor: pointer;
             margin: 10px;
+            transition: background-color 0.3s ease;
+            z-index: 1;
         }
         #backgroundSelect:hover {
             background-color: #555;
@@ -166,6 +211,7 @@
             align-items: center;
             gap: 10px;
             margin: 10px 0;
+            z-index: 1;
         }
         #confetti {
             position: fixed;
@@ -242,9 +288,15 @@
             border: 2px solid #333;
             border-radius: 5px;
             text-align: center;
+            transition: opacity 0.3s ease;
+            z-index: 1;
         }
         #teamSelection.hidden {
             display: none;
+            opacity: 0;
+        }
+        #leftArrow, #rightArrow {
+            transition: opacity 0.3s ease, display 0s;
         }
         @media (max-width: 768px) {
             #mainBoard td { 
@@ -268,6 +320,10 @@
                 width: 100px; 
                 font-size: 34px;
             }
+            .logo img {
+                width: 150px;
+                height: auto;
+            }
         }
         .color-box {
             display: none;
@@ -279,6 +335,7 @@
             width: fit-content;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
+            z-index: 1;
         }
         .color-box.show {
             display: block;
@@ -300,6 +357,7 @@
             gap: 10px;
             max-width: 600px;
             margin: 0 auto;
+            z-index: 1;
         }
         .teams-wrapper img#colorSettings {
             width: 30px;
@@ -329,11 +387,79 @@
             justify-content: center;
             gap: 5px;
         }
+        #nukeEffect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 69, 0, 0.3);
+            z-index: 999;
+            display: none;
+            pointer-events: none;
+            transition: opacity 1s ease-out; /* إضافة انتقال تدريجي للتلاشي */
+            opacity: 1;
+        }
+        #nukeEffect.fade-out {
+            opacity: 0;
+        }
+        .rocket {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background-color: #ff4500;
+            animation: fallRocket 2s linear forwards;
+        }
+        @keyframes fallRocket {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+        .explosion {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, rgba(255, 69, 0, 0.8) 0%, rgba(255, 140, 0, 0) 70%);
+            border-radius: 50%;
+            animation: explode 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        .smoke {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(128, 128, 128, 0.3) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            animation: smokeFade 2s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes smokeFade {
+            0% { transform: scale(0); opacity: 0.5; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        .flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            animation: flashAnimation 0.2s ease-out forwards;
+            display: none;
+        }
+        @keyframes flashAnimation {
+            0% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
     </style>
 </head>
 <body onload="showTeamSelection()">
     <div class="logo" style="margin-top: 10px;">
-        <a href="#"><img src="icons/logo.png" alt="شعار اللعبة"></a>
+        <a href="#"><img src="icons/logo.gif" alt="شعار اللعبة"></a>
     </div>
 
     <div class="popup" onclick="myFunction()" style="margin-top: 0px; margin-bottom: 10px;">
@@ -358,7 +484,7 @@
                             <input value="الشّمال" class="teamName red" id="leftTeam" size="20" type="text">
                         </div>
                     </div>
-                    <img alt09 alt="إعدادات الألوان" src="icons/struggle.gif" id="colorSettings" style="width: 50px; height: 50px; align-self: center;">
+                    <img alt09 alt="إعدادات الألوان" src="icons/struggle.png" id="colorSettings" style="width: 50px; height: 50px; align-self: center;">
                     <div class="team-container">
                         <img src="icons/arrow.png" id="rightArrow" class="arrow" style="display: none;">
                         <div class="team-inputs">
@@ -443,7 +569,7 @@
                     <img id="stopMusicButton" src="icons/stop.png" onclick="stopMusic()" alt="إيقاف الموسيقى">
                     <img id="changeColorsButton" src="icons/change.png" onclick="toggleColorBox()" alt="تغيير الألوان">
                     <select id="backgroundSelect" onchange="changeBackground()">
-                        <option value="default">افتراضي (رمادي)</option>
+                        <option value="default">افتراضي (أبيض غامق)</option>
                         <option value="lake">بحيرة هادئة</option>
                         <option value="rainy_window">نافذة ماطرة</option>
                         <option value="night_balloon">منطاد ليلي</option>
@@ -479,6 +605,8 @@
         <button id="playWinSoundButton">🎉 استمع إلى صوت الفوز!</button>
     </div>
     <div id="soundNotification"></div>
+    <div id="nukeEffect"></div>
+    <div id="flash" class="flash"></div>
 
     <center>
         <p><b><a href="#">جميع الحقوق محفوظة لعبة الحرب | طبول الحرب</a><br>
@@ -753,6 +881,10 @@
                     lastTeam = 'left';
                 }
             }
+        
+            if (data.points === 43) {
+                triggerNukeEffect();
+            }
         }
 
         function resetCentralImage() {
@@ -778,6 +910,8 @@
             distributePoints();
             document.getElementById('confetti').style.display = 'none';
             document.getElementById('gameOverMessage').style.display = 'none';
+            document.getElementById('nukeEffect').style.display = 'none';
+            document.getElementById('flash').style.display = 'none';
         }
 
         function showGameOver(winningTeam) {
@@ -800,25 +934,13 @@
             const teamName = document.getElementById(winningTeam === 'left' ? 'leftTeam' : 'rightTeam').value;
             gameOverText.textContent = `مبروك لفريق ${teamName} ${winningTeam === 'left' ? '🔴' : '🔵'}!`;
             gameOverMessage.style.display = 'block';
-
-            const playWinSoundButton = document.getElementById('playWinSoundButton');
-            playWinSoundButton.onclick = () => {
-                if (soundsEnabled) {
-                    stopMusic();
-                    let winSound = new Audio(winningTeam === 'left' ? 'sounds/red_win.mp3' : 'sounds/blue_win.mp3');
-                    if (winSound) {
-                        winSound.play().catch((error) => console.log("خطأ في تشغيل صوت الفوز:", error));
-                        currentAudio = winSound;
-                    }
-                }
-            };
         }
 
         function changeBackground() {
             const select = document.getElementById('backgroundSelect');
             const value = select.value;
             const backgrounds = {
-                'default': { color: '#f0f0f0', image: '' },
+                'default': { color: '#E8ECEF', image: '' }, /* تحديث لون الخلفية الافتراضية */
                 'lake': { image: 'https://moiyed.github.io/moiyed/backgrounds/lake.jpg' },
                 'rainy_window': { image: 'https://moiyed.github.io/moiyed/backgrounds/rainy_window.jpg' },
                 'night_balloon': { image: 'https://moiyed.github.io/moiyed/backgrounds/night_balloon.jpg' },
@@ -842,259 +964,91 @@
                 document.body.style.backgroundColor = 'transparent';
             }
         }
-    </script>
+function triggerNukeEffect() {
+    const nukeEffect = document.getElementById('nukeEffect');
+    const flash = document.getElementById('flash');
+    const mainBoard = document.getElementById('mainBoard');
+    const cells = mainBoard.getElementsByTagName('td');
+    const scores = document.getElementsByClassName('score');
+    const teamNames = document.getElementsByClassName('teamName');
+    const arrows = document.getElementsByClassName('arrow');
 
-    <!-- Cloudflare Challenge Scripts -->
-    <script>
-        (function(){
-            function c(){
-                var b = a.contentDocument || a.contentWindow.document;
-                if(b){
-                    var d = b.createElement('script');
-                    d.innerHTML = "window.__CF$cv$params={r:'930dc9af4dbcbabf',t:'MTc0NDc0NDY5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-                    b.getElementsByTagName('head')[0].appendChild(d);
-                }
-            }
-            if(document.body){
-                var a = document.createElement('iframe');
-                a.height = 1;
-                a.width = 1;
-                a.style.position = 'absolute';
-                a.style.top = 0;
-                a.style.left = 0;
-                a.style.border = 'none';
-                a.style.visibility = 'hidden';
-                document.body.appendChild(a);
-                if('loading' !== document.readyState) c();
-                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
-                else {
-                    var e = document.onreadystatechange || function(){};
-                    document.onreadystatechange = function(b){
-                        e(b);
-                        if('loading' !== document.readyState){
-                            document.onreadystatechange = e;
-                            c();
-                        }
-                    };
-                }
-            }
-        })();
-    </script>
+    nukeEffect.style.display = 'block';
+    flash.style.display = 'block';
 
-    <script>
-        (function(){
-            function c(){
-                var b = a.contentDocument || a.contentWindow.document;
-                if(b){
-                    var d = b.createElement('script');
-                    d.innerHTML = "window.__CF$cv$params={r:'931af0c448fc456a',t:'MTc0NDg4MjYxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-                    b.getElementsByTagName('head')[0].appendChild(d);
-                }
-            }
-            if(document.body){
-                var a = document.createElement('iframe');
-                a.height = 1;
-                a.width = 1;
-                a.style.position = 'absolute';
-                a.style.top = 0;
-                a.style.left = 0;
-                a.style.border = 'none';
-                a.style.visibility = 'hidden';
-                document.body.appendChild(a);
-                if('loading' !== document.readyState) c();
-                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
-                else {
-                    var e = document.onreadystatechange || function(){};
-                    document.onreadystatechange = function(b){
-                        e(b);
-                        if('loading' !== document.readyState){
-                            document.onreadystatechange = e;
-                            c();
-                        }
-                    };
-                }
-            }
-        })();
-    </script>
+    // إضافة صواريخ بكثرة (زيادة عدد الصواريخ إلى 50)
+    for (let i = 0; i < 50; i++) {
+        const rocket = document.createElement('div');
+        rocket.className = 'rocket';
+        rocket.style.left = Math.random() * 100 + 'vw';
+        rocket.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        rocket.style.animationDelay = Math.random() * 2 + 's';
+        nukeEffect.appendChild(rocket);
 
-    <script>
-        (function(){
-            function c(){
-                var b = a.contentDocument || a.contentWindow.document;
-                if(b){
-                    var d = b.createElement('script');
-                    d.innerHTML = "window.__CF$cv$params={r:'931da6e539c58832',t:'MTc0NDkxMTA0My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-                    b.getElementsByTagName('head')[0].appendChild(d);
-                }
-            }
-            if(document.body){
-                var a = document.createElement('iframe');
-                a.height = 1;
-                a.width = 1;
-                a.style.position = 'absolute';
-                a.style.top = 0;
-                a.style.left = 0;
-                a.style.border = 'none';
-                a.style.visibility = 'hidden';
-                document.body.appendChild(a);
-                if('loading' !== document.readyState) c();
-                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
-                else {
-                    var e = document.onreadystatechange || function(){};
-                    document.onreadystatechange = function(b){
-                        e(b);
-                        if('loading' !== document.readyState){
-                            document.onreadystatechange = e;
-                            c();
-                        }
-                    };
-                }
-            }
-        })();
-    </script>
+        // إضافة انفجار عند السقوط مع تعديل التوقيت
+        setTimeout(() => {
+            const explosion = document.createElement('div');
+            explosion.className = 'explosion';
+            explosion.style.left = rocket.style.left;
+            explosion.style.top = '90vh';
+            nukeEffect.appendChild(explosion);
+            setTimeout(() => explosion.remove(), 500);
+        }, (Math.random() * 4 + 2) * 1000);
+    }
 
-    <script>
-        (function(){
-            function c(){
-                var b = a.contentDocument || a.contentWindow.document;
-                if(b){
-                    var d = b.createElement('script');
-                    d.innerHTML = "window.__CF$cv$params={r:'93467c018a278e06',t:'MTc0NTMzOTIwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-                    b.getElementsByTagName('head')[0].appendChild(d);
-                }
-            }
-            if(document.body){
-                var a = document.createElement('iframe');
-                a.height = 1;
-                a.width = 1;
-                a.style.position = 'absolute';
-                a.style.top = 0;
-                a.style.left = 0;
-                a.style.border = 'none';
-                a.style.visibility = 'hidden';
-                document.body.appendChild(a);
-                if('loading' !== document.readyState) c();
-                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
-                else {
-                    var e = document.onreadystatechange || function(){};
-                    document.onreadystatechange = function(b){
-                        e(b);
-                        if('loading' !== document.readyState){
-                            document.onreadystatechange = e;
-                            c();
-                        }
-                    };
-                }
-            }
-        })();
-    </script>
+    // إضافة دخان بكثرة (زيادة عدد الدخان إلى 30 وتعديل الأحجام)
+    for (let i = 0; i < 30; i++) {
+        const smoke = document.createElement('div');
+        smoke.className = 'smoke';
+        smoke.style.left = Math.random() * 100 + 'vw';
+        smoke.style.top = Math.random() * 100 + 'vh';
+        smoke.style.width = Math.random() * 150 + 50 + 'px'; // زيادة الحجم العشوائي للدخان
+        smoke.style.height = Math.random() * 150 + 50 + 'px';
+        smoke.style.background = `radial-gradient(circle, rgba(128, 128, 128, ${Math.random() * 0.5 + 0.3}) 0%, rgba(0, 0, 0, 0) 70%)`; // زيادة كثافة الدخان
+        smoke.style.animationDelay = Math.random() * 2 + 's';
+        nukeEffect.appendChild(smoke);
+        setTimeout(() => smoke.remove(), 4000); // زيادة مدة بقاء الدخان
+    }
 
-    <script>
-        (function(){
-            function c(){
-                var b = a.contentDocument || a.contentWindow.document;
-                if(b){
-                    var d = b.createElement('script');
-                    d.innerHTML = "window.__CF$cv$params={r:'934d2a5639aa53c8',t:'MTc0NTQwOTI1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-                    b.getElementsByTagName('head')[0].appendChild(d);
-                }
-            }
-            if(document.body){
-                var a = document.createElement('iframe');
-                a.height = 1;
-                a.width = 1;
-                a.style.position = 'absolute';
-                a.style.top = 0;
-                a.style.left = 0;
-                a.style.border = 'none';
-                a.style.visibility = 'hidden';
-                document.body.appendChild(a);
-                if('loading' !== document.readyState) c();
-                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
-                else {
-                    var e = document.onreadystatechange || function(){};
-                    document.onreadystatechange = function(b){
-                        e(b);
-                        if('loading' !== document.readyState){
-                            document.onreadystatechange = e;
-                            c();
-                        }
-                    };
-                }
-            }
-        })();
-    </script>
+    // إضافة اهتزاز
+    mainBoard.classList.add('shake');
+    for (let cell of cells) {
+        cell.classList.add('shake');
+        cell.querySelector('img').classList.add('shake');
+    }
+    for (let score of scores) score.classList.add('shake');
+    for (let name of teamNames) name.classList.add('shake');
+    for (let arrow of arrows) arrow.classList.add('shake');
 
-    <script>
-        (function(){
-            function c(){
-                var b = a.contentDocument || a.contentWindow.document;
-                if(b){
-                    var d = b.createElement('script');
-                    d.innerHTML = "window.__CF$cv$params={r:'9359969ecf5ded8b',t:'MTc0NTUzOTUyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-                    b.getElementsByTagName('head')[0].appendChild(d);
-                }
-            }
-            if(document.body){
-                var a = document.createElement('iframe');
-                a.height = 1;
-                a.width = 1;
-                a.style.position = 'absolute';
-                a.style.top = 0;
-                a.style.left = 0;
-                a.style.border = 'none';
-                a.style.visibility = 'hidden';
-                document.body.appendChild(a);
-                if('loading' !== document.readyState) c();
-                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
-                else {
-                    var e = document.onreadystatechange || function(){};
-                    document.onreadystatechange = function(b){
-                        e(b);
-                        if('loading' !== document.readyState){
-                            document.onreadystatechange = e;
-                            c();
-                        }
-                    };
-                }
-            }
-        })();
-    </script>
+    if (soundsEnabled) {
+        const boomSound = new Audio('sounds/boom.mp3');
+        boomSound.play().catch(() => console.log("خطأ في تشغيل صوت الانفجار"));
+    }
 
-    <script>
-        (function(){
-            function c(){
-                var b = a.contentDocument || a.contentWindow.document;
-                if(b){
-                    var d = b.createElement('script');
-                    d.innerHTML = "window.__CF$cv$params={r:'93bb4f671af37cc4',t:'MTc0NjU2NDIwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
-                    b.getElementsByTagName('head')[0].appendChild(d);
-                }
-            }
-            if(document.body){
-                var a = document.createElement('iframe');
-                a.height = 1;
-                a.width = 1;
-                a.style.position = 'absolute';
-                a.style.top = 0;
-                a.style.left = 0;
-                a.style.border = 'none';
-                a.style.visibility = 'hidden';
-                document.body.appendChild(a);
-                if('loading' !== document.readyState) c();
-                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
-                else {
-                    var e = document.onreadystatechange || function(){};
-                    document.onreadystatechange = function(b){
-                        e(b);
-                        if('loading' !== document.readyState){
-                            document.onreadystatechange = e;
-                            c();
-                        }
-                    };
-                }
-            }
-        })();
+    // بدء التلاشي بعد 5 ثوانٍ (يترك 2 ثانية للتلاشي التدريجي)
+    setTimeout(() => {
+        nukeEffect.classList.add('fade-out');
+        flash.style.display = 'none';
+        mainBoard.classList.remove('shake');
+        for (let cell of cells) {
+            cell.classList.remove('shake');
+            cell.querySelector('img').classList.remove('shake');
+        }
+        for (let score of scores) score.classList.remove('shake');
+        for (let name of teamNames) name.classList.remove('shake');
+        for (let arrow of arrows) arrow.classList.remove('shake');
+    }, 5000);
+
+    // إخفاء العنصر تمامًا بعد انتهاء التلاشي التدريجي (7 ثوانٍ)
+    setTimeout(() => {
+        nukeEffect.style.opacity = '0'; // التأكد من التلاشي التدريجي
+        setTimeout(() => {
+            nukeEffect.style.display = 'none';
+            nukeEffect.innerHTML = '';
+            nukeEffect.style.opacity = '1'; // استعادة العرض التدريجي للخلفية الأصلية
+        }, 2000); // مدة إضافية 2 ثانية للعودة التدريجية
+    }, 7000);
+}
     </script>
 </body>
 </html>
