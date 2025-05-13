@@ -976,22 +976,22 @@
             confettiContainer.style.display = 'block';
 
             // إضافة القصاصات الورقية
-            for (let i = 0; i < 800; i++) {
+            for (let i = 0; i < 500; i++) {
                 const piece = document.createElement('div');
                 piece.className = 'confetti-piece';
-                piece.style.left = Math.random() * 500 + 'vw';
-                piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 80%)`;
+                piece.style.left = Math.random() * 300 + 'vw';
+                piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 30%)`;
                 piece.style.animationDelay = Math.random() * 3 + 's';
                 confettiContainer.appendChild(piece);
             }
 
             // إضافة الألعاب النارية
-            for (let i = 0; i < 800; i++) {
+            for (let i = 0; i < 500; i++) {
                 const firework = document.createElement('div');
                 firework.className = 'firework';
                 firework.style.left = Math.random() * 100 + 'vw';
-                firework.style.top = '100vh';
-                firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                firework.style.top = '50vh';
+                firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 20%)`;
                 firework.style.animationDelay = Math.random() * 2 + 's';
                 confettiContainer.appendChild(firework);
 
@@ -1000,7 +1000,7 @@
                     const explosion = document.createElement('div');
                     explosion.className = 'firework-explosion';
                     explosion.style.left = firework.style.left;
-                    explosion.style.top = '90vh';
+                    explosion.style.top = '50vh';
                     confettiContainer.appendChild(explosion);
 
                     // إضافة جزيئات الانفجار
