@@ -41,7 +41,6 @@
         #mainBoard {
             border: 2px solid #333;
             background-color: #d1d1d1;
-            position: relative;
         }
         #mainBoard td {
             width: 75px;
@@ -330,72 +329,6 @@
             justify-content: center;
             gap: 5px;
         }
-        /* Music Player Styles */
-        #musicPlayer {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-        }
-        #musicPlayer img {
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        #musicPlayer img:hover {
-            transform: scale(1.1);
-        }
-        #volumeControl {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        #volumeSlider {
-            -webkit-appearance: none;
-            width: 100px;
-            height: 8px;
-            background: #000;
-            border-radius: 5px;
-            outline: none;
-        }
-        #volumeSlider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            background: #ff0000;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        #volumeSlider::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            background: #ff0000;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        #volumePercentage {
-            color: #fff;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        #songTitle {
-            color: #fff;
-            font-size: 14px;
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
     </style>
 </head>
 <body onload="showTeamSelection()">
@@ -536,21 +469,6 @@
                     <img class="coloredCircle" alt="palBlue" onclick="changeBoardColor('#87CEEB', '#c2bbba')" src="icons/palBlueCircle.png">
                     <img class="coloredCircle" alt="pink" onclick="changeBoardColor('#FF69B4', '#33222a')" src="icons/pinkCircle.png">
                 </div>
-
-                <!-- Music Player -->
-                <div id="musicPlayer">
-                    <div id="songTitle">لا توجد أغنية</div>
-                    <div style="display: flex; gap: 5px;">
-                        <img id="previousButton" src="music_button/previous-track.png" onclick="playPreviousSong()" alt="السابق">
-                        <img id="playButton" src="music_button/play-button.png" onclick="togglePlayPause()" alt="تشغيل">
-                        <img id="stopButton" src="music_button/stop-button.png" onclick="stopBackgroundMusic()" alt="إيقاف">
-                        <img id="nextButton" src="music_button/next-track.png" onclick="playNextSong()" alt="التالي">
-                    </div>
-                    <div id="volumeControl">
-                        <input type="range" id="volumeSlider" min="0" max="100" value="50" oninput="adjustVolume()">
-                        <span id="volumePercentage">50%</span>
-                    </div>
-                </div>
             </th>
         </tr>
     </table>
@@ -566,9 +484,6 @@
         <p><b><a href="#">جميع الحقوق محفوظة لعبة الحرب | طبول الحرب</a><br>
         <a href="#"> مطور اللعبة : Moiyed Al Aiyeed</a></b></p>
     </center>
-
-    <!-- YouTube IFrame API -->
-    <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
         const pointsData = [
@@ -625,19 +540,6 @@
         let rightTeamHasMask = false;
         let soundsEnabled = true;
 
-        // YouTube Player Variables
-        let player;
-        let currentSongIndex = -1;
-        let isPlaying = false;
-        let songs = [
-            "https://www.youtube.com/watch?v=0HVM9UKoEhI&t=1s", // مثال: Never Gonna Give You Up
-            "https://www.youtube.com/watch?v=D7BE26jL-2A&t=1s"   // مثال: Another Song
-            "https://www.youtube.com/watch?v=NrC1T6M-IWE&t=1s"   // مثال: Another Song
-            "https://www.youtube.com/watch?v=bmALIE4mdMM&t=1s"   // مثال: Another Song
-            "https://www.youtube.com/watch?v=0v5cK1ws5K8&t=1s"   // مثال: Another Song
-            // أضف روابط يوتيوب أخرى هنا
-        ];
-
         function showTeamSelection() {
             document.getElementById('teamSelection').classList.remove('hidden');
         }
@@ -666,108 +568,6 @@
             document.getElementById('toggleSoundButton').src = 'icons/switch-on.png';
             resetCentralImage();
             distributePoints();
-            initializeMusicPlayer();
-        }
-
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '0',
-                width: '0',
-                videoId: '',
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 0,
-                    'rel': 0,
-                    'showinfo': 0,
-                    'modestbranding': 1,
-                    'playsinline': 1
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
-            });
-        }
-
-        function onPlayerReady(event) {
-            // يمكن تحميل أغنية عند الاستعداد
-            if (currentSongIndex !== -1) {
-                loadVideoById(getVideoId(songs[currentSongIndex]));
-            }
-        }
-
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.ENDED) {
-                playNextSong();
-            }
-        }
-
-        function getVideoId(url) {
-            const videoId = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
-            return videoId ? videoId[1] : null;
-        }
-
-        function loadVideoById(videoId) {
-            if (player && videoId) {
-                player.loadVideoById(videoId);
-                player.setVolume(document.getElementById('volumeSlider').value);
-                updateSongTitle();
-            }
-        }
-
-        function togglePlayPause() {
-            if (!isPlaying) {
-                if (currentSongIndex === -1) {
-                    currentSongIndex = Math.floor(Math.random() * songs.length);
-                }
-                loadVideoById(getVideoId(songs[currentSongIndex]));
-                player.playVideo();
-                isPlaying = true;
-                document.getElementById('playButton').src = 'music_button/pause-button.png';
-            } else {
-                player.pauseVideo();
-                isPlaying = false;
-                document.getElementById('playButton').src = 'music_button/play-button.png';
-            }
-        }
-
-        function stopBackgroundMusic() {
-            if (player) {
-                player.stopVideo();
-                isPlaying = false;
-                document.getElementById('playButton').src = 'music_button/play-button.png';
-                document.getElementById('songTitle').textContent = 'لا توجد أغنية';
-            }
-        }
-
-        function playNextSong() {
-            currentSongIndex = (currentSongIndex + 1) % songs.length;
-            loadVideoById(getVideoId(songs[currentSongIndex]));
-            player.playVideo();
-            isPlaying = true;
-            document.getElementById('playButton').src = 'music_button/pause-button.png';
-        }
-
-        function playPreviousSong() {
-            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-            loadVideoById(getVideoId(songs[currentSongIndex]));
-            player.playVideo();
-            isPlaying = true;
-            document.getElementById('playButton').src = 'music_button/pause-button.png';
-        }
-
-        function adjustVolume() {
-            const slider = document.getElementById('volumeSlider');
-            const volume = slider.value;
-            if (player) {
-                player.setVolume(volume);
-            }
-            document.getElementById('volumePercentage').textContent = `${volume}%`;
-        }
-
-        function updateSongTitle() {
-            const songName = songs[currentSongIndex].split('v=')[1]?.split('&')[0] || 'أغنية مجهولة';
-            document.getElementById('songTitle').textContent = songName;
         }
 
         function distributePoints() {
@@ -974,7 +774,6 @@
             soundsEnabled = true;
             document.getElementById('toggleSoundButton').src = 'icons/switch-on.png';
             stopMusic();
-            stopBackgroundMusic();
             resetCentralImage();
             distributePoints();
             document.getElementById('confetti').style.display = 'none';
@@ -1043,9 +842,6 @@
                 document.body.style.backgroundColor = 'transparent';
             }
         }
-
-        // Hidden iframe for YouTube player
-        <div id="player"></div>
     </script>
 
     <!-- Cloudflare Challenge Scripts -->
@@ -1056,6 +852,222 @@
                 if(b){
                     var d = b.createElement('script');
                     d.innerHTML = "window.__CF$cv$params={r:'930dc9af4dbcbabf',t:'MTc0NDc0NDY5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+                    b.getElementsByTagName('head')[0].appendChild(d);
+                }
+            }
+            if(document.body){
+                var a = document.createElement('iframe');
+                a.height = 1;
+                a.width = 1;
+                a.style.position = 'absolute';
+                a.style.top = 0;
+                a.style.left = 0;
+                a.style.border = 'none';
+                a.style.visibility = 'hidden';
+                document.body.appendChild(a);
+                if('loading' !== document.readyState) c();
+                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+                else {
+                    var e = document.onreadystatechange || function(){};
+                    document.onreadystatechange = function(b){
+                        e(b);
+                        if('loading' !== document.readyState){
+                            document.onreadystatechange = e;
+                            c();
+                        }
+                    };
+                }
+            }
+        })();
+    </script>
+
+    <script>
+        (function(){
+            function c(){
+                var b = a.contentDocument || a.contentWindow.document;
+                if(b){
+                    var d = b.createElement('script');
+                    d.innerHTML = "window.__CF$cv$params={r:'931af0c448fc456a',t:'MTc0NDg4MjYxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+                    b.getElementsByTagName('head')[0].appendChild(d);
+                }
+            }
+            if(document.body){
+                var a = document.createElement('iframe');
+                a.height = 1;
+                a.width = 1;
+                a.style.position = 'absolute';
+                a.style.top = 0;
+                a.style.left = 0;
+                a.style.border = 'none';
+                a.style.visibility = 'hidden';
+                document.body.appendChild(a);
+                if('loading' !== document.readyState) c();
+                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+                else {
+                    var e = document.onreadystatechange || function(){};
+                    document.onreadystatechange = function(b){
+                        e(b);
+                        if('loading' !== document.readyState){
+                            document.onreadystatechange = e;
+                            c();
+                        }
+                    };
+                }
+            }
+        })();
+    </script>
+
+    <script>
+        (function(){
+            function c(){
+                var b = a.contentDocument || a.contentWindow.document;
+                if(b){
+                    var d = b.createElement('script');
+                    d.innerHTML = "window.__CF$cv$params={r:'931da6e539c58832',t:'MTc0NDkxMTA0My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+                    b.getElementsByTagName('head')[0].appendChild(d);
+                }
+            }
+            if(document.body){
+                var a = document.createElement('iframe');
+                a.height = 1;
+                a.width = 1;
+                a.style.position = 'absolute';
+                a.style.top = 0;
+                a.style.left = 0;
+                a.style.border = 'none';
+                a.style.visibility = 'hidden';
+                document.body.appendChild(a);
+                if('loading' !== document.readyState) c();
+                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+                else {
+                    var e = document.onreadystatechange || function(){};
+                    document.onreadystatechange = function(b){
+                        e(b);
+                        if('loading' !== document.readyState){
+                            document.onreadystatechange = e;
+                            c();
+                        }
+                    };
+                }
+            }
+        })();
+    </script>
+
+    <script>
+        (function(){
+            function c(){
+                var b = a.contentDocument || a.contentWindow.document;
+                if(b){
+                    var d = b.createElement('script');
+                    d.innerHTML = "window.__CF$cv$params={r:'93467c018a278e06',t:'MTc0NTMzOTIwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+                    b.getElementsByTagName('head')[0].appendChild(d);
+                }
+            }
+            if(document.body){
+                var a = document.createElement('iframe');
+                a.height = 1;
+                a.width = 1;
+                a.style.position = 'absolute';
+                a.style.top = 0;
+                a.style.left = 0;
+                a.style.border = 'none';
+                a.style.visibility = 'hidden';
+                document.body.appendChild(a);
+                if('loading' !== document.readyState) c();
+                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+                else {
+                    var e = document.onreadystatechange || function(){};
+                    document.onreadystatechange = function(b){
+                        e(b);
+                        if('loading' !== document.readyState){
+                            document.onreadystatechange = e;
+                            c();
+                        }
+                    };
+                }
+            }
+        })();
+    </script>
+
+    <script>
+        (function(){
+            function c(){
+                var b = a.contentDocument || a.contentWindow.document;
+                if(b){
+                    var d = b.createElement('script');
+                    d.innerHTML = "window.__CF$cv$params={r:'934d2a5639aa53c8',t:'MTc0NTQwOTI1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+                    b.getElementsByTagName('head')[0].appendChild(d);
+                }
+            }
+            if(document.body){
+                var a = document.createElement('iframe');
+                a.height = 1;
+                a.width = 1;
+                a.style.position = 'absolute';
+                a.style.top = 0;
+                a.style.left = 0;
+                a.style.border = 'none';
+                a.style.visibility = 'hidden';
+                document.body.appendChild(a);
+                if('loading' !== document.readyState) c();
+                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+                else {
+                    var e = document.onreadystatechange || function(){};
+                    document.onreadystatechange = function(b){
+                        e(b);
+                        if('loading' !== document.readyState){
+                            document.onreadystatechange = e;
+                            c();
+                        }
+                    };
+                }
+            }
+        })();
+    </script>
+
+    <script>
+        (function(){
+            function c(){
+                var b = a.contentDocument || a.contentWindow.document;
+                if(b){
+                    var d = b.createElement('script');
+                    d.innerHTML = "window.__CF$cv$params={r:'9359969ecf5ded8b',t:'MTc0NTUzOTUyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+                    b.getElementsByTagName('head')[0].appendChild(d);
+                }
+            }
+            if(document.body){
+                var a = document.createElement('iframe');
+                a.height = 1;
+                a.width = 1;
+                a.style.position = 'absolute';
+                a.style.top = 0;
+                a.style.left = 0;
+                a.style.border = 'none';
+                a.style.visibility = 'hidden';
+                document.body.appendChild(a);
+                if('loading' !== document.readyState) c();
+                else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+                else {
+                    var e = document.onreadystatechange || function(){};
+                    document.onreadystatechange = function(b){
+                        e(b);
+                        if('loading' !== document.readyState){
+                            document.onreadystatechange = e;
+                            c();
+                        }
+                    };
+                }
+            }
+        })();
+    </script>
+
+    <script>
+        (function(){
+            function c(){
+                var b = a.contentDocument || a.contentWindow.document;
+                if(b){
+                    var d = b.createElement('script');
+                    d.innerHTML = "window.__CF$cv$params={r:'93bb4f671af37cc4',t:'MTc0NjU2NDIwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
                     b.getElementsByTagName('head')[0].appendChild(d);
                 }
             }
