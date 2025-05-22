@@ -19,7 +19,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #A9A9A9;
+            background-color: #ffffff; /* تغيير لون الخلفية الافتراضية إلى أبيض غامق */
             background-attachment: fixed;
             transition: background-image 0.5s ease, background-color 0.5s ease;
             text-align: center;
@@ -46,14 +46,11 @@
             position: relative;
         }
         #mainBoard {
-            border: 2px solid #333;
-            background-color: #E8ECEF; /* فضي فاتح كخلفية افتراضية */
+            border: 4px solid #0c0c0c;
+            background-color: #d1d1d1;
             position: relative;
             transition: background-color 0.5s ease;
             z-index: 1;
-            width: 800px;
-            height: 600px;
-            margin: 0 auto;
         }
         #mainBoard.shake {
             animation: shake 0.3s ease-in-out infinite;
@@ -66,8 +63,8 @@
             100% { transform: translate(0, 0); }
         }
         #mainBoard td {
-            width: 80px;
-            height: 70px;
+            width: 75px;
+            height: 60px;
             text-align: center;
             cursor: pointer;
             transition: transform 0.1s ease;
@@ -77,8 +74,8 @@
             animation: shake 0.3s ease-in-out infinite;
         }
         #mainBoard img {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             transition: transform 0.1s ease;
             z-index: 1;
         }
@@ -114,12 +111,12 @@
             opacity: 0;
         }
         .score, .teamName {
-            width: 130px; /* العودة إلى الحجم القديم */
-            padding: 12px;
-            margin: 0;
+            width: 117px;
+            padding: 5px;
+            margin: 5px;
             text-align: center;
             border: 3px solid #ccc;
-            font-size: 40px;
+            font-size: 36px;
             transition: transform 0.1s ease;
             z-index: 1;
         }
@@ -180,14 +177,14 @@
             margin-bottom: 10px;
         }
         .logo img {
-            width: 200px;
+            width: 300px;
             height: auto;
         }
         #resetButton, #stopMusicButton, #changeColorsButton, #toggleSoundButton {
-            width: 100px;
-            height: 50px;
+            width: 120px;
+            height: 60px;
             cursor: pointer;
-            margin: 5px;
+            margin: 10px;
             transition: filter 0.3s ease;
             z-index: 1;
         }
@@ -195,13 +192,13 @@
             filter: brightness(1.2);
         }
         #backgroundSelect {
-            padding: 8px 16px;
-            font-size: 14px;
+            padding: 10px 20px;
+            font-size: 16px;
             background-color: #333;
             color: #fff;
             border: none;
             cursor: pointer;
-            margin: 5px;
+            margin: 10px;
             transition: background-color 0.3s ease;
             z-index: 1;
         }
@@ -210,18 +207,10 @@
         }
         .button-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            width: 800px;
-            margin: 10px auto;
-            z-index: 1;
-        }
-        .sound-toggle-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 800px;
-            margin: 10px auto;
+            gap: 10px;
+            margin: 10px 0;
             z-index: 1;
         }
         #confetti {
@@ -249,6 +238,61 @@
             }
             100% {
                 transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: firework-launch 1s ease-in forwards;
+        }
+        @keyframes firework-launch {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50vh);
+                opacity: 0;
+            }
+        }
+        .firework-explosion {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            animation: firework-explode 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes firework-explode {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+        .firework-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: firework-particle 1s ease-out forwards;
+        }
+        @keyframes firework-particle {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(calc(50px * var(--dx)), calc(50px * var(--dy)));
                 opacity: 0;
             }
         }
@@ -310,17 +354,13 @@
             transition: opacity 0.3s ease, display 0s;
         }
         @media (max-width: 768px) {
-            #mainBoard {
-                width: 600px;
-                height: 450px;
-            }
             #mainBoard td { 
-                width: 60px;
-                height: 50px; 
+                width: 50px;
+                height: 40px; 
             }
             #mainBoard img { 
-                width: 40px; 
-                height: 40px; 
+                width: 30px; 
+                height: 30px; 
             }
             #centralTd { 
                 width: 360px;
@@ -332,39 +372,23 @@
                 object-fit: cover;
             }
             .score, .teamName { 
-                width: 80px; 
-                font-size: 24px;
+                width: 100px; 
+                font-size: 34px;
             }
             .logo img {
                 width: 150px;
                 height: auto;
             }
-            #resetButton, #stopMusicButton, #changeColorsButton, #toggleSoundButton {
-                width: 80px;
-                height: 40px;
-            }
-            #backgroundSelect {
-                padding: 6px 12px;
-                font-size: 12px;
-            }
-            .teams-wrapper {
-                width: 600px;
-            }
-            .button-container {
-                width: 600px;
-            }
-            .sound-toggle-container {
-                width: 600px;
-            }
         }
         .color-box {
             display: none;
-            background-color: #4A2C2A;
+            background-color: #fff;
             border: 2px solid #333;
             border-radius: 10px;
             padding: 10px;
             margin: 10px auto;
             width: fit-content;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
             z-index: 1;
         }
@@ -382,27 +406,28 @@
             transform: scale(1.2);
         }
         .teams-wrapper {
-            position: relative;
-            width: 800px;
-            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            max-width: 600px;
             margin: 0 auto;
             z-index: 1;
         }
+        .teams-wrapper img#colorSettings {
+            width: 30px;
+            height: 30px;
+            margin: 0 5px;
+        }
         .team-container {
-            position: absolute;
-            top: 0;
-            width: 320px;
-            height: 60px;
+            position: relative;
+            text-align: center;
+            height: 80px;
+            width: 250px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-        }
-        .team-container.left {
-            left: 0; /* محاذاة مع الحافة اليسرى للبورد */
-        }
-        .team-container.right {
-            right: 0; /* محاذاة مع الحافة اليمنى للبورد */
         }
         .team-container img.arrow {
             position: absolute;
@@ -427,7 +452,7 @@
             z-index: 999;
             display: none;
             pointer-events: none;
-            transition: opacity 2s ease-out;
+            transition: opacity 1s ease-out; /* إضافة انتقال تدريجي للتلاشي */
             opacity: 1;
         }
         #nukeEffect.fade-out {
@@ -488,14 +513,13 @@
     </style>
 </head>
 <body onload="showTeamSelection()">
-    <div class="logo" style="margin-top: 10px;">
-        <a href="#"><img src="icons/logo.png" alt="شعار اللعبة"></a>
+    <div class="logo" style="margin-top: 1px;">
+        <a href="#"><img src="icons/logo.gif" alt="شعار اللعبة"></a>
     </div>
 
     <div class="popup" onclick="myFunction()" style="margin-top: 0px; margin-bottom: 10px;">
         <span class="popuptext" id="myPopup">Moiyed Al Aiyeed</span>
-        <span style="font-weight: bold; background: linear-gradient(to right, black 100%, silver 0%)
-        text; color: transparent;">Moiyed Al Aiyeed</span>
+        <span style="font-weight: bold; background: linear-gradient(to right, black 100%, silver 0%); -webkit-background-clip: text; color: transparent;">Moiyed Al Aiyeed</span>
     </div>
 
     <div id="teamSelection">
@@ -508,15 +532,15 @@
         <tr>
             <th>
                 <div class="teams-wrapper">
-                    <div class="team-container left">
+                    <div class="team-container">
                         <img src="icons/arrow.png" id="leftArrow" class="arrow" style="display: none;">
                         <div class="team-inputs">
                             <input value="200" class="score red" id="leftScore" size="20" type="text" readonly>
                             <input value="الشّمال" class="teamName red" id="leftTeam" size="20" type="text">
                         </div>
                     </div>
-                    <img alt09 alt="إعدادات الألوان" src="icons/struggle.png" id="colorSettings" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; margin: 0;">
-                    <div class="team-container right">
+                    <img alt09 alt="إعدادات الألوان" src="icons/struggle.gif" id="colorSettings" style="width: 50px; height: 50px; align-self: center;">
+                    <div class="team-container">
                         <img src="icons/arrow.png" id="rightArrow" class="arrow" style="display: none;">
                         <div class="team-inputs">
                             <input value="اليَمين" class="teamName blue" id="rightTeam" size="20" type="text">
@@ -600,7 +624,7 @@
                     <img id="stopMusicButton" src="icons/stop.png" onclick="stopMusic()" alt="إيقاف الموسيقى">
                     <img id="changeColorsButton" src="icons/change.png" onclick="toggleColorBox()" alt="تغيير الألوان">
                     <select id="backgroundSelect" onchange="changeBackground()">
-                        <option value="default">افتراضي (رمادي غامق)</option>
+                        <option value="default">افتراضي (أبيض غامق)</option>
                         <option value="lake">بحيرة هادئة</option>
                         <option value="rainy_window">نافذة ماطرة</option>
                         <option value="night_balloon">منطاد ليلي</option>
@@ -613,18 +637,18 @@
                         <option value="turquoise_sea">بحر فيروزي</option>
                     </select>
                 </div>
-                <div class="sound-toggle-container">
-                    <div style="text-align: center; margin: 10px 0;">لتوقيف/تشغيل الأصوات نهائياً</div>
+                <div style="text-align: center; margin: 10px 0;">لتوقيف/تشغيل الأصوات نهائياً</div>
+                <div class="button-container">
                     <img id="toggleSoundButton" src="icons/switch-on.png" onclick="toggleSound()" alt="تشغيل/إيقاف الأصوات">
                 </div>
                 <div id="colorBox" class="color-box">
-                    <img class="coloredCircle" alt="red" onclick="changeBoardColor('#200701', '#d1d1d1')" src="icons/redCircle.png">
-                    <img class="coloredCircle" alt="blue" onclick="changeBoardColor('#00CED1', '#E8ECEF')" src="icons/trkwazCircle.png">
-                    <img class="coloredCircle" alt="green" onclick="changeBoardColor('#008000', '#E8ECEF')" src="icons/greenCircle.png">
-                    <img class="coloredCircle" alt="purple" onclick="changeBoardColor('#800080', '#E8ECEF')" src="icons/purpleCircle.png">
+                    <img class="coloredCircle" alt="red" onclick="changeBoardColor('#FF0000', '#d1d1d1')" src="icons/redCircle.png">
+                    <img class="coloredCircle" alt="blue" onclick="changeBoardColor('#00CED1', '#d1d1d1')" src="icons/trkwazCircle.png">
+                    <img class="coloredCircle" alt="green" onclick="changeBoardColor('#008000', '#d1d1d1')" src="icons/greenCircle.png">
+                    <img class="coloredCircle" alt="purple" onclick="changeBoardColor('#800080', '#d1d1d1')" src="icons/purpleCircle.png">
                     <img class="coloredCircle" alt="gray" onclick="changeBoardColor('#808080', '#3a4659')" src="icons/grayCircle.png">
                     <img class="coloredCircle" alt="palBlue" onclick="changeBoardColor('#87CEEB', '#c2bbba')" src="icons/palBlueCircle.png">
-                    <img class="coloredCircle" alt="pink" onclick="changeBoardColor('#7800b4', '#33222a')" src="icons/pinkCircle.png">
+                    <img class="coloredCircle" alt="pink" onclick="changeBoardColor('#FF69B4', '#33222a')" src="icons/pinkCircle.png">
                 </div>
             </th>
         </tr>
@@ -951,13 +975,49 @@
             confettiContainer.innerHTML = '';
             confettiContainer.style.display = 'block';
 
-            for (let i = 0; i < 100; i++) {
+            // إضافة القصاصات الورقية
+            for (let i = 0; i < 500; i++) {
                 const piece = document.createElement('div');
                 piece.className = 'confetti-piece';
-                piece.style.left = Math.random() * 100 + 'vw';
-                piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                piece.style.left = Math.random() * 300 + 'vw';
+                piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 30%)`;
                 piece.style.animationDelay = Math.random() * 3 + 's';
                 confettiContainer.appendChild(piece);
+            }
+
+            // إضافة الألعاب النارية
+            for (let i = 0; i < 500; i++) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.left = Math.random() * 100 + 'vw';
+                firework.style.top = '50vh';
+                firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 20%)`;
+                firework.style.animationDelay = Math.random() * 2 + 's';
+                confettiContainer.appendChild(firework);
+
+                // إضافة انفجار الألعاب النارية
+                setTimeout(() => {
+                    const explosion = document.createElement('div');
+                    explosion.className = 'firework-explosion';
+                    explosion.style.left = firework.style.left;
+                    explosion.style.top = '50vh';
+                    confettiContainer.appendChild(explosion);
+
+                    // إضافة جزيئات الانفجار
+                    for (let j = 0; j < 50; j++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'firework-particle';
+                        particle.style.left = firework.style.left;
+                        particle.style.top = '50vh';
+                        particle.style.backgroundColor = firework.style.backgroundColor;
+                        const angle = Math.random() * 2 * Math.PI;
+                        particle.style.setProperty('--dx', Math.cos(angle));
+                        particle.style.setProperty('--dy', Math.sin(angle));
+                        confettiContainer.appendChild(particle);
+                    }
+
+                    setTimeout(() => explosion.remove(), 1000);
+                }, 5000 + parseFloat(firework.style.animationDelay) * 5000);
             }
 
             const gameOverMessage = document.getElementById('gameOverMessage');
@@ -971,7 +1031,7 @@
             const select = document.getElementById('backgroundSelect');
             const value = select.value;
             const backgrounds = {
-                'default': { color: '#A9A9A9', image: '' },
+                'default': { color: '#E8ECEF', image: '' }, /* تحديث لون الخلفية الافتراضية */
                 'lake': { image: 'https://moiyed.github.io/moiyed/backgrounds/lake.jpg' },
                 'rainy_window': { image: 'https://moiyed.github.io/moiyed/backgrounds/rainy_window.jpg' },
                 'night_balloon': { image: 'https://moiyed.github.io/moiyed/backgrounds/night_balloon.jpg' },
@@ -995,86 +1055,91 @@
                 document.body.style.backgroundColor = 'transparent';
             }
         }
+function triggerNukeEffect() {
+    const nukeEffect = document.getElementById('nukeEffect');
+    const flash = document.getElementById('flash');
+    const mainBoard = document.getElementById('mainBoard');
+    const cells = mainBoard.getElementsByTagName('td');
+    const scores = document.getElementsByClassName('score');
+    const teamNames = document.getElementsByClassName('teamName');
+    const arrows = document.getElementsByClassName('arrow');
 
-        function triggerNukeEffect() {
-            const nukeEffect = document.getElementById('nukeEffect');
-            const flash = document.getElementById('flash');
-            const mainBoard = document.getElementById('mainBoard');
-            const cells = mainBoard.getElementsByTagName('td');
-            const scores = document.getElementsByClassName('score');
-            const teamNames = document.getElementsByClassName('teamName');
-            const arrows = document.getElementsByClassName('arrow');
+    nukeEffect.style.display = 'block';
+    flash.style.display = 'block';
 
-            nukeEffect.style.display = 'block';
-            flash.style.display = 'block';
+    // إضافة صواريخ بكثرة (زيادة عدد الصواريخ إلى 50)
+    for (let i = 0; i < 50; i++) {
+        const rocket = document.createElement('div');
+        rocket.className = 'rocket';
+        rocket.style.left = Math.random() * 100 + 'vw';
+        rocket.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        rocket.style.animationDelay = Math.random() * 2 + 's';
+        nukeEffect.appendChild(rocket);
 
-            for (let i = 0; i < 50; i++) {
-                const rocket = document.createElement('div');
-                rocket.className = 'rocket';
-                rocket.style.left = Math.random() * 100 + 'vw';
-                rocket.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                rocket.style.animationDelay = Math.random() * 2 + 's';
-                nukeEffect.appendChild(rocket);
+        // إضافة انفجار عند السقوط مع تعديل التوقيت
+        setTimeout(() => {
+            const explosion = document.createElement('div');
+            explosion.className = 'explosion';
+            explosion.style.left = rocket.style.left;
+            explosion.style.top = '90vh';
+            nukeEffect.appendChild(explosion);
+            setTimeout(() => explosion.remove(), 500);
+        }, (Math.random() * 4 + 2) * 1000);
+    }
 
-                setTimeout(() => {
-                    const explosion = document.createElement('div');
-                    explosion.className = 'explosion';
-                    explosion.style.left = rocket.style.left;
-                    explosion.style.top = '90vh';
-                    nukeEffect.appendChild(explosion);
-                    setTimeout(() => explosion.remove(), 500);
-                }, (Math.random() * 4 + 2) * 1000);
-            }
+    // إضافة دخان بكثرة (زيادة عدد الدخان إلى 30 وتعديل الأحجام)
+    for (let i = 0; i < 30; i++) {
+        const smoke = document.createElement('div');
+        smoke.className = 'smoke';
+        smoke.style.left = Math.random() * 100 + 'vw';
+        smoke.style.top = Math.random() * 100 + 'vh';
+        smoke.style.width = Math.random() * 150 + 50 + 'px'; // زيادة الحجم العشوائي للدخان
+        smoke.style.height = Math.random() * 150 + 50 + 'px';
+        smoke.style.background = `radial-gradient(circle, rgba(128, 128, 128, ${Math.random() * 0.5 + 0.3}) 0%, rgba(0, 0, 0, 0) 70%)`; // زيادة كثافة الدخان
+        smoke.style.animationDelay = Math.random() * 2 + 's';
+        nukeEffect.appendChild(smoke);
+        setTimeout(() => smoke.remove(), 4000); // زيادة مدة بقاء الدخان
+    }
 
-            for (let i = 0; i < 30; i++) {
-                const smoke = document.createElement('div');
-                smoke.className = 'smoke';
-                smoke.style.left = Math.random() * 100 + 'vw';
-                smoke.style.top = Math.random() * 100 + 'vh';
-                smoke.style.width = Math.random() * 150 + 50 + 'px';
-                smoke.style.height = Math.random() * 150 + 50 + 'px';
-                smoke.style.background = `radial-gradient(circle, rgba(128, 128, 128, ${Math.random() * 0.5 + 0.3}) 0%, rgba(0, 0, 0, 0) 70%)`;
-                smoke.style.animationDelay = Math.random() * 2 + 's';
-                nukeEffect.appendChild(smoke);
-                setTimeout(() => smoke.remove(), 4000);
-            }
+    // إضافة اهتزاز
+    mainBoard.classList.add('shake');
+    for (let cell of cells) {
+        cell.classList.add('shake');
+        cell.querySelector('img').classList.add('shake');
+    }
+    for (let score of scores) score.classList.add('shake');
+    for (let name of teamNames) name.classList.add('shake');
+    for (let arrow of arrows) arrow.classList.add('shake');
 
-            mainBoard.classList.add('shake');
-            for (let cell of cells) {
-                cell.classList.add('shake');
-                cell.querySelector('img').classList.add('shake');
-            }
-            for (let score of scores) score.classList.add('shake');
-            for (let name of teamNames) name.classList.add('shake');
-            for (let arrow of arrows) arrow.classList.add('shake');
+    if (soundsEnabled) {
+        const boomSound = new Audio('sounds/boom.mp3');
+        boomSound.play().catch(() => console.log("خطأ في تشغيل صوت الانفجار"));
+    }
 
-            if (soundsEnabled) {
-                const boomSound = new Audio('sounds/boom.mp3');
-                boomSound.play().catch(() => console.log("خطأ في تشغيل صوت الانفجار"));
-            }
-
-            setTimeout(() => {
-                nukeEffect.classList.add('fade-out');
-                flash.style.display = 'none';
-                mainBoard.classList.remove('shake');
-                for (let cell of cells) {
-                    cell.classList.remove('shake');
-                    cell.querySelector('img').classList.remove('shake');
-                }
-                for (let score of scores) score.classList.remove('shake');
-                for (let name of teamNames) name.classList.remove('shake');
-                for (let arrow of arrows) arrow.classList.remove('shake');
-            }, 5000);
-
-            setTimeout(() => {
-                nukeEffect.style.opacity = '0';
-                setTimeout(() => {
-                    nukeEffect.style.display = 'none';
-                    nukeEffect.innerHTML = '';
-                    nukeEffect.style.opacity = '1';
-                }, 2000);
-            }, 7000);
+    // بدء التلاشي بعد 5 ثوانٍ (يترك 2 ثانية للتلاشي التدريجي)
+    setTimeout(() => {
+        nukeEffect.classList.add('fade-out');
+        flash.style.display = 'none';
+        mainBoard.classList.remove('shake');
+        for (let cell of cells) {
+            cell.classList.remove('shake');
+            cell.querySelector('img').classList.remove('shake');
         }
+        for (let score of scores) score.classList.remove('shake');
+        for (let name of teamNames) name.classList.remove('shake');
+        for (let arrow of arrows) arrow.classList.remove('shake');
+    }, 5000);
+
+    // إخفاء العنصر تمامًا بعد انتهاء التلاشي التدريجي (7 ثوانٍ)
+    setTimeout(() => {
+        nukeEffect.style.opacity = '0'; // التأكد من التلاشي التدريجي
+        setTimeout(() => {
+            nukeEffect.style.display = 'none';
+            nukeEffect.innerHTML = '';
+            nukeEffect.style.opacity = '1'; // استعادة العرض التدريجي للخلفية الأصلية
+        }, 2000); // مدة إضافية 2 ثانية للعودة التدريجية
+    }, 7000);
+}
     </script>
 </body>
 </html>
