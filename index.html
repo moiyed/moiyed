@@ -569,7 +569,8 @@
 
     <div class="popup" onclick="myFunction()" style="margin-top: 0px; margin-bottom: 10px;">
         <span class="popuptext" id="myPopup">Moiyed Al Aiyeed</span>
-        <span style="font-weight: bold; background: linear-gradient(to right, black 100%, silver 0%); -webkit-background-clip: text; color: transparent;">Moiyed Al Aiyeed</span>
+        <span style="font-weight: bold; background: linear-gradient(to right, black 100%, silver 0%)
+        text; color: transparent;">Moiyed Al Aiyeed</span>
     </div>
 
     <div id="teamSelection">
@@ -597,7 +598,7 @@
                             <input value="الشّمال" class="teamName red" id="leftTeam" size="20" type="text">
                         </div>
                     </div>
-                    <img alt09 alt="إعدادات الألوان" src="icons/struggle.gif" id="colorSettings" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; margin: 0;">
+                    <img alt09 alt="إعدادات الألوان" src="icons/struggle.png" id="colorSettings" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; margin: 0;">
                     <div class="team-container right">
                         <img src="icons/arrow.png" id="rightArrow" class="arrow" style="display: none;">
                         <div class="team-inputs">
@@ -942,7 +943,7 @@
             { image: "points/0 (2).png", points: 0, sound: "sounds/2.mp3", type: "normal" },
             { image: "points/0 (3).png", points: 0, sound: "sounds/3.mp3", type: "normal" },
             { image: "points/3.png", points: 3, sound: "sounds/5.mp3", type: "normal" },
-            { image: "points/1.png", points: 0, sound: "sounds/فوق قدرتنا.mp3", type: "normal" },
+            { image: "points/1.png", points: 1, sound: "sounds/فوق قدرتنا.mp3", type: "normal" },
             { image: "points/1 (2).png", points: 1, sound: "sounds/4.mp3", type: "normal" },
             { image: "points/1 (3).png", points: 1, sound: "sounds/n-mbswt-kd-wn-khnzyr.mp3", type: "normal" },
             { image: "points/4 (1).png", points: 4, sound: "sounds/oh-no-no-no-laugh.mp3", type: "normal" },
@@ -972,7 +973,7 @@
             { image: "points/15.png", points: 15, sound: "sounds/عطيني قطراف راسك.mp3", type: "normal" },
             { image: "points/13.png", points: 13, sound: "sounds/والله ماتقدرلي ياكواد.mp3", type: "normal" },
             { image: "points/18.png", points: 18, sound: "sounds/زبلعجي ولك.mp3", type: "normal" },
-            { image: "points/17.png", points: 17, sound: "sounds/انت وين لكيت هاي الكلاوات.mp3", type: "normal" },
+            { image: "points/17.png", points: -17, sound: "sounds/انت وين لكيت هاي الكلاوات.mp3", type: "normal" },
             { image: "points/17 (3).png", points: 17, sound: "sounds/اخدو زعيم اخدو.mp3", type: "normal" },
             { image: "points/21.png", points: 21, sound: "sounds/ابن سوريا لو امك تولدك من جديد.mp3", type: "normal" },
             { image: "points/21 (2).png", points: 21, sound: "sounds/ابن سوريا طوبز مشتري ايباد جديد.mp3", type: "normal" },
@@ -1167,14 +1168,24 @@
                 if (leftArrowVisible) {
                     if (data.image === "points/17.png" && rightTeamHasMask) {
                         document.getElementById('WeaponPower').value = 'الفريق الأزرق محمي بكمامة من غاز نيسان!';
+                        points = 0; // الضربة تصبح 0 إذا كان لدى الفريق الأزرق كمامة
+                    } else if (data.image === "points/17.png") {
+                        rightScore -= 17; // تخصم 17 نقطة من الفريق الأزرق إذا لم يكن لديه كمامة
+                    } else if (points < 0) {
+                        leftScore += points; // النقاط السالبة تُنقص من الفريق نفسه
                     } else {
-                        rightScore -= points;
+                        rightScore -= points; // النقاط الموجبة تُنقص من الفريق الخصم
                     }
                 } else {
                     if (data.image === "points/17.png" && leftTeamHasMask) {
                         document.getElementById('WeaponPower').value = 'الفريق الأحمر محمي بكمامة من غاز نيسان!';
+                        points = 0; // الضربة تصبح 0 إذا كان لدى الفريق الأحمر كمامة
+                    } else if (data.image === "points/17.png") {
+                        leftScore -= 17; // تخصم 17 نقطة من الفريق الأحمر إذا لم يكن لديه كمامة
+                    } else if (points < 0) {
+                        rightScore += points; // النقاط السالبة تُنقص من الفريق نفسه
                     } else {
-                        leftScore -= points;
+                        leftScore -= points; // النقاط الموجبة تُنقص من الفريق الخصم
                     }
                 }
                 document.getElementById('leftScore').value = leftScore;
