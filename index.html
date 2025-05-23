@@ -47,7 +47,7 @@
         }
         #mainBoard {
             border: 2px solid #333;
-            background-color: rgba(51, 25, 0, 0.9); /* بني غامق مائل للأسود */
+            background-color: rgba(51, 25, 0, 0.9);
             position: relative;
             transition: background-color 0.5s ease;
             z-index: 1;
@@ -72,17 +72,45 @@
             cursor: pointer;
             transition: transform 0.1s ease;
             z-index: 1;
+            position: relative;
         }
         #mainBoard td.shake {
             animation: shake 0.3s ease-in-out infinite;
         }
-        #mainBoard img {
+        .icon-container {
+            position: relative;
             width: 60px;
             height: 60px;
-            transition: transform 0.1s ease;
+            margin: 0 auto;
+        }
+        #mainBoard .original-icon {
+            width: 60px;
+            height: 60px;
+            transition: filter 0.3s ease, opacity 0.3s ease;
             z-index: 1;
         }
-        #mainBoard img.shake {
+        #mainBoard .original-icon.used {
+            filter: grayscale(100%);
+            opacity: 0.5;
+        }
+        #mainBoard .original-icon.shake {
+            animation: shake 0.3s ease-in-out infinite;
+        }
+        #mainBoard .close-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            display: none;
+            z-index: 2;
+        }
+        #mainBoard .close-icon.show {
+            display: block;
+            opacity: 0.7;
+        }
+        #mainBoard .close-icon.shake {
             animation: shake 0.3s ease-in-out infinite;
         }
         #centralTd {
@@ -113,13 +141,24 @@
             z-index: 0;
             opacity: 0;
         }
-        .score, .teamName {
+        .score {
             width: 100px;
+            height: 50px; /* لجعلها مربعة */
             padding: 5px;
             margin: 0;
             text-align: center;
             border: 3px solid #ccc;
-            font-size: 30px;
+            font-size: 40px;
+            transition: transform 0.1s ease;
+            z-index: 1;
+        }
+        .teamName {
+            width: 200px; /* لتطويل خانة اسم الفريق */
+            padding: 5px;
+            margin: 0;
+            text-align: center;
+            border: 3px solid #ccc;
+            font-size: 40px;
             transition: transform 0.1s ease;
             z-index: 1;
         }
@@ -184,8 +223,8 @@
             height: auto;
         }
         #resetButton, #stopMusicButton, #changeColorsButton, #toggleSoundButton {
-            width: 100px;
-            height: 50px;
+            width: 150px;
+            height: 80px;
             cursor: pointer;
             margin: 5px;
             transition: filter 0.3s ease;
@@ -301,7 +340,7 @@
             text-align: center;
             transition: opacity 0.3s ease;
             z-index: 1;
-            width: 300px; /* تصغير عرض المستطيل */
+            width: 300px;
         }
         #teamSelection.hidden {
             display: none;
@@ -322,7 +361,7 @@
             filter: brightness(1.2);
         }
         .team-button:active {
-            transform: scale(0.95); /* تأثير الضغط */
+            transform: scale(0.95);
         }
         .team-buttons-container {
             display: flex;
@@ -331,7 +370,7 @@
         }
         #leftArrow, #rightArrow {
             transition: opacity 0.3s ease, display 0s;
-            z-index: 10; /* رفع السهم ليكون في الطبقة الأمامية */
+            z-index: 10;
         }
         @media (max-width: 768px) {
             #mainBoard {
@@ -342,9 +381,14 @@
                 width: 60px;
                 height: 50px; 
             }
-            #mainBoard img { 
-                width: 40px; 
-                height: 40px; 
+            .icon-container {
+                width: 40px;
+                height: 40px;
+            }
+            #mainBoard .original-icon,
+            #mainBoard .close-icon {
+                width: 40px;
+                height: 40px;
             }
             #centralTd { 
                 width: 360px;
@@ -381,7 +425,7 @@
                 width: 600px;
             }
             #teamSelection {
-                width: 250px; /* تصغير المستطيل أكثر للشاشات الصغيرة */
+                width: 250px;
             }
             .team-button img {
                 width: 50px;
@@ -430,10 +474,10 @@
             align-items: center;
         }
         .team-container.left {
-            left: 0;
+            left: 52px;
         }
         .team-container.right {
-            right: 0;
+            right: 52px;
         }
         .team-container img.arrow {
             position: absolute;
@@ -553,7 +597,7 @@
                             <input value="الشّمال" class="teamName red" id="leftTeam" size="20" type="text">
                         </div>
                     </div>
-                    <img alt09 alt="إعدادات الألوان" src="icons/struggle.png" id="colorSettings" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; margin: 0;">
+                    <img alt09 alt="إعدادات الألوان" src="icons/struggle.gif" id="colorSettings" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; margin: 0;">
                     <div class="team-container right">
                         <img src="icons/arrow.png" id="rightArrow" class="arrow" style="display: none;">
                         <div class="team-inputs">
@@ -566,70 +610,280 @@
                 <table id="mainBoard" align="center" border="0" cellpadding="0" cellspacing="0">
                     <tbody>
                         <tr>
-                            <td id="tab1" onclick="go(this.id)"><img alt="item1" src="icons/apple.png"></td>
-                            <td id="tab2" onclick="go(this.id)"><img alt="item2" src="icons/six.png"></td>
-                            <td id="tab3" onclick="go(this.id)"><img alt="item3" src="icons/five.png"></td>
-                            <td id="tab4" onclick="go(this.id)"><img alt="item4" src="icons/four.png"></td>
-                            <td id="tab5" onclick="go(this.id)"><img alt="item5" src="icons/three.png"></td>
-                            <td id="tab6" onclick="go(this.id)"><img alt="item6" src="icons/two.png"></td>
-                            <td id="tab7" onclick="go(this.id)"><img alt="item7" src="icons/one.png"></td>
-                            <td id="tab8" onclick="go(this.id)"><img alt="item8" src="icons/whatsapp.png"></td>
+                            <td id="tab1" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item1" src="icons/apple.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab2" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item2" src="icons/six.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab3" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item3" src="icons/five.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab4" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item4" src="icons/four.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab5" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item5" src="icons/three.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab6" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item6" src="icons/two.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab7" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item7" src="icons/one.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab8" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item8" src="icons/whatsapp.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <td id="tab9" onclick="go(this.id)"><img alt="item9" src="icons/huawei.png"></td>
-                            <td id="tab10" onclick="go(this.id)"><img alt="item10" src="icons/twelve.png"></td>
-                            <td id="tab11" onclick="go(this.id)"><img alt="item11" src="icons/eleven.png"></td>
-                            <td id="tab12" onclick="go(this.id)"><img alt="item12" src="icons/ten.png"></td>
-                            <td id="tab13" onclick="go(this.id)"><img alt="item13" src="icons/nine.png"></td>
-                            <td id="tab14" onclick="go(this.id)"><img alt="item14" src="icons/eight.png"></td>
-                            <td id="tab15" onclick="go(this.id)"><img alt="item15" src="icons/seven.png"></td>
-                            <td id="tab16" onclick="go(this.id)"><img alt="item16" src="icons/facebook.png"></td>
+                            <td id="tab9" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item9" src="icons/huawei.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab10" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item10" src="icons/twelve.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab11" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item11" src="icons/eleven.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab12" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item12" src="icons/ten.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab13" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item13" src="icons/nine.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab14" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item14" src="icons/eight.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab15" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item15" src="icons/seven.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab16" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item16" src="icons/facebook.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <td id="tab17" onclick="go(this.id)"><img alt="item17" src="icons/barcelona.png"></td>
+                            <td id="tab17" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item17" src="icons/barcelona.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
                             <td colspan="6" rowspan="5" id="centralTd">
                                 <div id="imageDiv">
                                     <img src="icons/tt.png" alt="عنصر مركزي" id="pic00">
                                     <input id="WeaponPower" type="text" placeholder="قوة السلاح">
                                 </div>
                             </td>
-                            <td id="tab18" onclick="go(this.id)"><img alt="item18" src="icons/skype.png"></td>
+                            <td id="tab18" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item18" src="icons/skype.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <td id="tab19" onclick="go(this.id)"><img alt="item19" src="icons/real-madrid.png"></td>
-                            <td id="tab20" onclick="go(this.id)"><img alt="item20" src="icons/social.png"></td>
+                            <td id="tab19" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item19" src="icons/real-madrid.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab20" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item20" src="icons/social.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <td id="tab21" onclick="go(this.id)"><img alt="item21" src="icons/gmail.png"></td>
-                            <td id="tab22" onclick="go(this.id)"><img alt="item22" src="icons/messenger.png"></td>
+                            <td id="tab21" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item21" src="icons/gmail.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab22" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item22" src="icons/messenger.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <td id="tab23" onclick="go(this.id)"><img alt="item23" src="icons/google-maps.png"></td>
-                            <td id="tab24" onclick="go(this.id)"><img alt="item24" src="icons/twitter.png"></td>
+                            <td id="tab23" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item23" src="icons/google-maps.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab24" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item24" src="icons/twitter.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <td id="tab25" onclick="go(this.id)"><img alt="item25" src="icons/starbucks.png"></td>
-                            <td id="tab26" onclick="go(this.id)"><img alt="item26" src="icons/tiktok.png"></td>
+                            <td id="tab25" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item25" src="icons/starbucks.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab26" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item26" src="icons/tiktok.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <td id="tab27" onclick="go(this.id)"><img alt="item27" src="icons/netflix.png"></td>
-                            <td id="tab28" onclick="go(this.id)"><img alt="item28" src="icons/lion.png"></td>
-                            <td id="tab29" onclick="go(this.id)"><img alt="item29" src="icons/bee.png"></td>
-                            <td id="tab30" onclick="go(this.id)"><img alt="item30" src="icons/butterfly.png"></td>
-                            <td id="tab31" onclick="go(this.id)"><img alt="item31" src="icons/cow.png"></td>
-                            <td id="tab32" onclick="go(this.id)"><img alt="item32" src="icons/hookah.png"></td>
-                            <td id="tab33" onclick="go(this.id)"><img alt="item33" src="icons/elephant.png"></td>
-                            <td id="tab34" onclick="go(this.id)"><img alt="item34" src="icons/snapchat.png"></td>
+                            <td id="tab27" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item27" src="icons/netflix.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab28" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item28" src="icons/lion.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab29" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item29" src="icons/bee.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab30" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item30" src="icons/butterfly.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab31" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item31" src="icons/cow.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab32" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item32" src="icons/hookah.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab33" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item33" src="icons/elephant.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab34" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item34" src="icons/snapchat.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <td id="tab35" onclick="go(this.id)"><img alt="item35" src="icons/lebanon.png"></td>
-                            <td id="tab36" onclick="go(this.id)"><img alt="item36" src="icons/iraq.png"></td>
-                            <td id="tab37" onclick="go(this.id)"><img alt="item37" src="icons/algeria.png"></td>
-                            <td id="tab38" onclick="go(this.id)"><img alt="item38" src="icons/jordan (1).png"></td>
-                            <td id="tab39" onclick="go(this.id)"><img alt="item39" src="icons/saudi-arabia.png"></td>
-                            <td id="tab40" onclick="go(this.id)"><img alt="item40" src="icons/morocco.png"></td>
-                            <td id="tab41" onclick="go(this.id)"><img alt="item41" src="icons/palestine.png"></td>
-                            <td id="tab42" onclick="go(this.id)"><img alt="item42" src="icons/syria.png"></td>
+                            <td id="tab35" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item35" src="icons/lebanon.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab36" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item36" src="icons/iraq.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab37" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item37" src="icons/algeria.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab38" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item38" src="icons/jordan (1).png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab39" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item39" src="icons/saudi-arabia.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab40" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item40" src="icons/morocco.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab41" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item41" src="icons/palestine.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
+                            <td id="tab42" onclick="go(this.id)">
+                                <div class="icon-container">
+                                    <img class="original-icon" alt="item42" src="icons/syria.png">
+                                    <img class="close-icon" src="icons/close.png">
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -736,6 +990,7 @@
         let leftTeamHasMask = false;
         let rightTeamHasMask = false;
         let soundsEnabled = true;
+        let isNukeActive = false; // متغير جديد لتتبع حالة التأثير النووي
 
         function showTeamSelection() {
             document.getElementById('teamSelection').classList.remove('hidden');
@@ -806,7 +1061,11 @@
             ];
             for (let i = 1; i <= 42; i++) {
                 const cell = document.getElementById(`tab${i}`);
-                cell.querySelector('img').src = originalImages[i - 1];
+                const originalIcon = cell.querySelector('.original-icon');
+                const closeIcon = cell.querySelector('.close-icon');
+                originalIcon.src = originalImages[i - 1];
+                originalIcon.classList.remove('used');
+                closeIcon.classList.remove('show');
                 cellData[`tab${i}`].used = false;
             }
         }
@@ -922,7 +1181,11 @@
                 document.getElementById('rightScore').value = rightScore;
             }
         
-            document.getElementById(tabId).querySelector('img').src = "icons/close.png";
+            const cell = document.getElementById(tabId);
+            const originalIcon = cell.querySelector('.original-icon');
+            const closeIcon = cell.querySelector('.close-icon');
+            originalIcon.classList.add('used');
+            closeIcon.classList.add('show');
             cellData[tabId].used = true;
         
             if (leftScore <= -1) {
