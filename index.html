@@ -1112,121 +1112,145 @@
         }
 
         function go(tabId) {
-            if (!gameActive || cellData[tabId].used) return;
-        
+            // السماح بفتح الآيقونات حتى بعد انتهاء اللعبة، لكن فقط إذا لم تكن مستخدمة
+            if (cellData[tabId].used) return;
+
             const leftArrowVisible = document.getElementById('leftArrow').style.display === 'block';
             const rightArrowVisible = document.getElementById('rightArrow').style.display === 'block';
-        
-            if (!leftArrowVisible && !rightArrowVisible) {
+
+            // التأكد من اختيار فريق أثناء اللعبة النشطة فقط
+            if (gameActive && !leftArrowVisible && !rightArrowVisible) {
                 alert('يرجى تحديد فريق للعب!');
                 return;
             }
-        
+
             const data = cellData[tabId];
             let points = data.points;
-        
+
             let leftScore = parseInt(document.getElementById('leftScore').value);
             let rightScore = parseInt(document.getElementById('rightScore').value);
-        
+
+            // عرض الصورة المركزية وتشغيل الصوت بغض النظر عن حالة اللعبة
+            document.getElementById('pic00').src = data.image;
             if (data.type === 'prison') {
-                skipTurns = 2;
-                if (leftArrowVisible) {
-                    document.getElementById('WeaponPower').value = 'تم سجن الفريق الأحمر!';
-                    document.getElementById('leftArrow').style.display = 'none';
-                    document.getElementById('rightArrow').style.display = 'block';
-                    lastTeam = 'right';
-                } else {
-                    document.getElementById('WeaponPower').value = 'تم سجن الفريق الأزرق!';
-                    document.getElementById('rightArrow').style.display = 'none';
-                    document.getElementById('leftArrow').style.display = 'block';
-                    lastTeam = 'left';
-                }
+                document.getElementById('WeaponPower').value = leftArrowVisible ? 'تم سجن الفريق الأحمر!' : 'تم سجن الفريق الأزرق!';
             } else {
                 document.getElementById('WeaponPower').value = `${points} نقطة`;
             }
-        
-            document.getElementById('pic00').src = data.image;
-        
+
             if (soundsEnabled) {
                 stopMusic();
                 const audio = new Audio(data.sound);
                 audio.play().catch(() => console.log("خطأ في تشغيل الصوت"));
                 currentAudio = audio;
             }
-        
-            if (data.type !== 'prison') {
-                if (data.image === "points/1.png") {
-                    if (leftArrowVisible) {
-                        leftTeamHasMask = true;
-                        document.getElementById('WeaponPower').value = 'الفريق الأحمر حصل على كمامة!';
-                    } else {
-                        rightTeamHasMask = true;
-                        document.getElementById('WeaponPower').value = 'الفريق الأزرق حصل على كمامة!';
-                    }
-                }
-        
-                if (leftArrowVisible) {
-                    if (data.image === "points/17.png" && rightTeamHasMask) {
-                        document.getElementById('WeaponPower').value = 'الفريق الأزرق محمي بكمامة من غاز نيسان!';
-                        points = 0; // الضربة تصبح 0 إذا كان لدى الفريق الأزرق كمامة
-                    } else if (data.image === "points/17.png") {
-                        rightScore -= 17; // تخصم 17 نقطة من الفريق الأزرق إذا لم يكن لديه كمامة
-                    } else if (points < 0) {
-                        leftScore += points; // النقاط السالبة تُنقص من الفريق نفسه
-                    } else {
-                        rightScore -= points; // النقاط الموجبة تُنقص من الفريق الخصم
-                    }
-                } else {
-                    if (data.image === "points/17.png" && leftTeamHasMask) {
-                        document.getElementById('WeaponPower').value = 'الفريق الأحمر محمي بكمامة من غاز نيسان!';
-                        points = 0; // الضربة تصبح 0 إذا كان لدى الفريق الأحمر كمامة
-                    } else if (data.image === "points/17.png") {
-                        leftScore -= 17; // تخصم 17 نقطة من الفريق الأحمر إذا لم يكن لديه كمامة
-                    } else if (points < 0) {
-                        rightScore += points; // النقاط السالبة تُنقص من الفريق نفسه
-                    } else {
-                        leftScore -= points; // النقاط الموجبة تُنقص من الفريق الخصم
-                    }
-                }
-                document.getElementById('leftScore').value = leftScore;
-                document.getElementById('rightScore').value = rightScore;
-            }
-        
+
+            // وضع علامة "X" على الآيقونة المستخدمة
             const cell = document.getElementById(tabId);
             const originalIcon = cell.querySelector('.original-icon');
             const closeIcon = cell.querySelector('.close-icon');
             originalIcon.classList.add('used');
             closeIcon.classList.add('show');
             cellData[tabId].used = true;
-        
-            if (leftScore <= -1) {
-                setTimeout(() => {
-                    showGameOver('left');
-                }, 2000);
-                return;
-            } else if (rightScore <= -1) {
-                setTimeout(() => {
-                    showGameOver('right');
-                }, 2000);
-                return;
-            }
-        
-            if (skipTurns > 0) {
-                skipTurns--;
-            } else {
-                if (leftArrowVisible) {
-                    document.getElementById('leftArrow').style.display = 'none';
-                    document.getElementById('rightArrow').style.display = 'block';
-                    lastTeam = 'right';
+
+            // تنفيذ منطق اللعبة (تحديث النقاط، الفرق، إلخ) فقط إذا كانت اللعبة نشطة
+            if (gameActive) {
+                if (data.type === 'prison') {
+                    skipTurns = 2;
+                    if (leftArrowVisible) {
+                        document.getElementById('leftArrow').style.display = 'none';
+                        document.getElementById('rightArrow').style.display = 'block';
+                        lastTeam = 'right';
+                        updateFrame('right');
+                    } else {
+                        document.getElementById('rightArrow').style.display = 'none';
+                        document.getElementById('leftArrow').style.display = 'block';
+                        lastTeam = 'left';
+                        updateFrame('left');
+                    }
                 } else {
-                    document.getElementById('rightArrow').style.display = 'none';
-                    document.getElementById('leftArrow').style.display = 'block';
-                    lastTeam = 'left';
+                    if (data.image === "points/1.png") {
+                        if (leftArrowVisible) {
+                            leftTeamHasMask = true;
+                            document.getElementById('WeaponPower').value = 'الفريق الأحمر حصل على كمامة!';
+                        } else {
+                            rightTeamHasMask = true;
+                            document.getElementById('WeaponPower').value = 'الفريق الأزرق حصل على كمامة!';
+                        }
+                    }
+
+                    if (leftArrowVisible) {
+                        if (data.image === "points/17.png" && rightTeamHasMask) {
+                            document.getElementById('WeaponPower').value = 'الفريق الأزرق محمي بكمامة من غاز نيسان!';
+                            points = 0;
+                        } else if (data.image === "points/17.png") {
+                            rightScore -= 17;
+                        } else if (points < 0) {
+                            leftScore += points;
+                        } else {
+                            rightScore -= points;
+                        }
+                    } else {
+                        if (data.image === "points/17.png" && leftTeamHasMask) {
+                            document.getElementById('WeaponPower').value = 'الفريق الأحمر محمي بكمامة من غاز نيسان!';
+                            points = 0;
+                        } else if (data.image === "points/17.png") {
+                            leftScore -= 17;
+                        } else if (points < 0) {
+                            rightScore += points;
+                        } else {
+                            leftScore -= points;
+                        }
+                    }
+                    document.getElementById('leftScore').value = leftScore;
+                    document.getElementById('rightScore').value = rightScore;
+
+                    // فحص انتهاء الخيارات
+                    const remainingCells = Object.values(cellData).filter(cell => !cell.used).length;
+                    if (remainingCells === 0) {
+                        if (leftScore > -1 && rightScore > -1) {
+                            setTimeout(() => {
+                                showGameOver(null, 'تعادل! النقاط: ' + leftScore + ' - ' + rightScore);
+                            }, 2000);
+                            gameActive = false;
+                            return;
+                        }
+                    }
+
+                    if (leftScore <= -1) {
+                        setTimeout(() => {
+                            showGameOver('left');
+                        }, 2000);
+                        gameActive = false;
+                        return;
+                    } else if (rightScore <= -1) {
+                        setTimeout(() => {
+                            showGameOver('right');
+                        }, 2000);
+                        gameActive = false;
+                        return;
+                    }
+
+                    if (skipTurns > 0) {
+                        skipTurns--;
+                    } else {
+                        if (leftArrowVisible) {
+                            document.getElementById('leftArrow').style.display = 'none';
+                            document.getElementById('rightArrow').style.display = 'block';
+                            lastTeam = 'right';
+                            updateFrame('right');
+                        } else {
+                            document.getElementById('rightArrow').style.display = 'none';
+                            document.getElementById('leftArrow').style.display = 'block';
+                            lastTeam = 'left';
+                            updateFrame('left');
+                        }
+                    }
+
+                    if (data.points === 43) {
+                        triggerNukeEffect();
+                    }
                 }
-            }
-        
-            if (data.points === 43) {
-                triggerNukeEffect();
             }
         }
 
