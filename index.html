@@ -1219,13 +1219,13 @@
 
                     if (leftScore <= -1) {
                         setTimeout(() => {
-                            showGameOver('left');
+                            showGameOver('right');
                         }, 2000);
                         gameActive = false;
                         return;
                     } else if (rightScore <= -1) {
                         setTimeout(() => {
-                            showGameOver('right');
+                            showGameOver('left');
                         }, 2000);
                         gameActive = false;
                         return;
