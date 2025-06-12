@@ -1156,7 +1156,7 @@
             // تنفيذ منطق اللعبة (تحديث النقاط، الفرق، إلخ) فقط إذا كانت اللعبة نشطة
             if (gameActive) {
                 if (data.type === 'prison') {
-                    skipTurns = 2;
+                    skipTurns = 1;
                     if (leftArrowVisible) {
                         document.getElementById('leftArrow').style.display = 'none';
                         document.getElementById('rightArrow').style.display = 'block';
